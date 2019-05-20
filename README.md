@@ -6,3 +6,5 @@ https://drive.google.com/drive/folders/1-C7YnBcHKBlUjw1mvXkTru-9xRJfRaaU?usp=sha
 
 영상신호처리 강의 자료
 https://drive.google.com/drive/folders/1-C7YnBcHKBlUjw1mvXkTru-9xRJfRaaU?usp=sharing
+
+Can not resolve 뜨면 Ctrl + Shift + o 를 눌러보세요
