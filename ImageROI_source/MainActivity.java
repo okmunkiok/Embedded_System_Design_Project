@@ -116,16 +116,20 @@ public class MainActivity extends Activity
 		} 
 	} 
 	
-//	이진화
+//	gray-scaling
 //	출처
 //	https://stackoverflow.com/questions/16333340/converting-simple-image-to-greyscale
+//	참고
+//	https://developer.android.com/reference/android/graphics/Bitmap
 	private Bitmap grayScale(final Bitmap orgBitmap) {
 	    int width, height;
 	    height = orgBitmap.getHeight();
 	    width = orgBitmap.getWidth();
 	    Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+	    
 	    Canvas canvas = new Canvas(bmpGrayscale);
 	    Paint paint = new Paint();
+	    
 	    ColorMatrix colorMatrix = new ColorMatrix();
 	    colorMatrix.setSaturation(0);
 	    ColorMatrixColorFilter colorMatrixFilter = new ColorMatrixColorFilter(colorMatrix);
@@ -133,6 +137,9 @@ public class MainActivity extends Activity
 	    canvas.drawBitmap(orgBitmap, 0, 0, paint);
 	    return bmpGrayscale;
 	}
+	
+	
+	private 
 	
 	
 
