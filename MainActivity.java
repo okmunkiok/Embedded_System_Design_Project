@@ -1,6 +1,6 @@
 package com.example.imageroi;
 
-import android.app.Activity;
+// import android.app.Activity;
 import android.content.Intent; 
 import android.graphics.Bitmap; 
 import android.graphics.BitmapFactory; 
@@ -23,7 +23,7 @@ import android.content.Context;
 
 public class MainActivity extends Activity 
 { 
-	ImageView imageView1, imageView2; //// ImageView1Àº ¿ø·¡ ÀÌ¹ÌÁö¸¦ º¸ÀÌ°í ImageView2´Â ÀÌ¹ÌÁöÀÇ ÀÌÁøÈ­ °á°ú¸¦ º¸ÀÓ 
+	ImageView imageView1, imageView2; //// ImageView1ì€ ì›ë˜ ì´ë¯¸ì§€ë¥¼ ë³´ì´ê³  ImageView2ëŠ” ì´ë¯¸ì§€ì˜ ì´ì§„í™” ê²°ê³¼ë¥¼ ë³´ì„ 
 	Button button1, button2; 
 	Bitmap bitmap1; //// original image
 	Bitmap bitmap2; //// processed image
@@ -50,32 +50,32 @@ public class MainActivity extends Activity
 				}
 				else if (v==button2) {
 					
-					bitmap2 = grayScale(bitmap1);			//// Èæ¹é »çÁø(grayscale)·Î º¯°æ) + ÀÌÁøÈ­
+					bitmap2 = grayScale(bitmap1);			//// í‘ë°± ì‚¬ì§„(grayscale)ë¡œ ë³€ê²½) + ì´ì§„í™”
 					
-					//// resize, °¡·ÎÆøÀÌ 200 ÇÈ¼¿·Î ¼³Á¤
+					//// resize, ê°€ë¡œí­ì´ 200 í”½ì…€ë¡œ ì„¤ì •
 					////bitmap3 = resizeBitmap(bitmap2, 200);        
 					
-					//// resize, ºñÀ²ÀÌ 1/8·Î Ãà¼Ò
+					//// resize, ë¹„ìœ¨ì´ 1/8ë¡œ ì¶•ì†Œ
 					bitmap3 = resize_samplesize(bitmap2, 8);
 					
-					imageView2.setImageBitmap(bitmap3); 	//// resizeµÈ ÀÌÁøÈ­µÈ ÀÌ¹ÌÁö¸¦ ImageView¿¡ º¸ÀÓ
+					imageView2.setImageBitmap(bitmap3); 	//// resizeëœ ì´ì§„í™”ëœ ì´ë¯¸ì§€ë¥¼ ImageViewì— ë³´ì„
 				
-					imageView2.setDrawingCacheEnabled(true);  //È­¸é¿¡ »Ñ¸±¶§ Ä³½Ã¸¦ »ç¿ëÇÏ°Ô ÇÑ´Ù
+					imageView2.setDrawingCacheEnabled(true);  //í™”ë©´ì— ë¿Œë¦´ë•Œ ìºì‹œë¥¼ ì‚¬ìš©í•˜ê²Œ í•œë‹¤
 
-					bitmap3 = imageView2.getDrawingCache();   //Ä³½Ã¸¦ ºñÆ®¸ÊÀ¸·Î º¯È¯
+					bitmap3 = imageView2.getDrawingCache();   //ìºì‹œë¥¼ ë¹„íŠ¸ë§µìœ¼ë¡œ ë³€í™˜
 					
-					//// ÀÌÁøÈ­ ÀÌ¹ÌÁö SDcard¿¡ ÀúÀå
+					//// ì´ì§„í™” ì´ë¯¸ì§€ SDcardì— ì €ì¥
 					FileOutputStream outStream = null;
 			        String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
 		
 					File file = new File(extStorageDirectory, "binarized.jpg");
 			        try {
 			        	outStream = new FileOutputStream(file);
-			            bitmap3.compress(Bitmap.CompressFormat.JPEG, 80, outStream);   //// ¼ıÀÚ°¡ ÀûÀ» ¼ö·Ï ¾ĞÃà·üÀÌ ³ôÀ½ JEPG¿¡¼­ 100ÀÏ¶§ 100~150KB, 80ÀÏ¶§ 16KB Á¤µµÀÓ
+			            bitmap3.compress(Bitmap.CompressFormat.JPEG, 80, outStream);   //// ìˆ«ìê°€ ì ì„ ìˆ˜ë¡ ì••ì¶•ë¥ ì´ ë†’ìŒ JEPGì—ì„œ 100ì¼ë•Œ 100~150KB, 80ì¼ë•Œ 16KB ì •ë„ì„
 			            outStream.flush();
 			            outStream.close();
 			            
-			            //// ºê·ÎµåÄ³½ºÆÃÇØ¼­ °¶·¯¸®¿¡ º¸ÀÌµµ·Ï ÇÔ
+			            //// ë¸Œë¡œë“œìºìŠ¤íŒ…í•´ì„œ ê°¤ëŸ¬ë¦¬ì— ë³´ì´ë„ë¡ í•¨
 		                sendBroadcast(new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
 		                
 		                imageView2.setDrawingCacheEnabled(false);
@@ -101,12 +101,12 @@ public class MainActivity extends Activity
 			// Make sure the request was successful 
 			if (resultCode == RESULT_OK) { 
 				try { 
-					// ¼±ÅÃÇÑ ÀÌ¹ÌÁö¿¡¼­ ºñÆ®¸Ê »ı¼º 
+					// ì„ íƒí•œ ì´ë¯¸ì§€ì—ì„œ ë¹„íŠ¸ë§µ ìƒì„± 
 					InputStream in = getContentResolver().openInputStream(data.getData()); 
 
-					bitmap1 = BitmapFactory.decodeStream(in); //// ÀÌÁøÈ­ ÇÔ¼ö¿¡ ³Ñ°ÜÁÖ±â À§ÇÔ
+					bitmap1 = BitmapFactory.decodeStream(in); //// ì´ì§„í™” í•¨ìˆ˜ì— ë„˜ê²¨ì£¼ê¸° ìœ„í•¨
 					in.close(); 
-					// ÀÌ¹ÌÁö Ç¥½Ã 
+					// ì´ë¯¸ì§€ í‘œì‹œ 
 					imageView1.setImageBitmap(bitmap1);
 				} catch (Exception e) { 
 					e.printStackTrace(); 
@@ -115,7 +115,7 @@ public class MainActivity extends Activity
 		} 
 	} 
 	
-	//// Èæ¹é (grayscale) ÀÌ¹ÌÁö·Î ¸¸µå´Â ÄÚµåÀÓ, ÃâÃ³: https://devms.tistory.com/37
+	//// í‘ë°± (grayscale) ì´ë¯¸ì§€ë¡œ ë§Œë“œëŠ” ì½”ë“œì„, ì¶œì²˜: https://devms.tistory.com/37
 	private Bitmap grayScale(final Bitmap orgBitmap){
         int width, height;
         width = orgBitmap.getWidth();
@@ -139,7 +139,7 @@ public class MainActivity extends Activity
                 int gray = (int) (0.2989 * R + 0.5870 * G + 0.1140 * B);
  
                 
-                //// ÀÌÁøÈ­¸¦ ¸¸µå´Â ÄÚµåÀÓ
+                //// ì´ì§„í™”ë¥¼ ë§Œë“œëŠ” ì½”ë“œì„
                 // use 128 as threshold, above -> white, below -> black
                 ////
                 if (gray > 128)
@@ -154,7 +154,7 @@ public class MainActivity extends Activity
         return bmpGrayScale;
     }
 
-	//// ÀÌ¹ÌÁö resize with °¡·ÎÆø ÇÈ¼¿, ÃâÃ³: https://dwfox.tistory.com/37  
+	//// ì´ë¯¸ì§€ resize with ê°€ë¡œí­ í”½ì…€, ì¶œì²˜: https://dwfox.tistory.com/37  
 	private Bitmap resizeBitmap(Bitmap original, int resizeWidth) {
 		 
 	    ////int resizeWidth = 200;
@@ -168,7 +168,7 @@ public class MainActivity extends Activity
 	    return result;
 	}
 	
-	//// ÀÌ¹ÌÁö resize by ratio, ÃâÃ³: https://it77.tistory.com/99
+	//// ì´ë¯¸ì§€ resize by ratio, ì¶œì²˜: https://it77.tistory.com/99
 	private Bitmap resize_samplesize (Bitmap original, int samplesize) {
 
 		Bitmap resized = Bitmap.createScaledBitmap(original, (int)((double) original.getWidth()/samplesize), (int)((double) original.getHeight()/samplesize), true);
