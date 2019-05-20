@@ -20,6 +20,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import android.graphics.Matrix;
+//import for handle bmp by Matrix
+
 
 
 public class MainActivity extends Activity 
@@ -51,6 +54,7 @@ public class MainActivity extends Activity
 				}
 				else if (v==button2) {
 					
+					// 이진화 호출입니다
 					bitmap2 = grayScale(bitmap1);			//// 흑백 사진(grayscale)로 변경) + 이진화
 					
 					//// resize, 가로폭이 200 픽셀로 설정
@@ -116,11 +120,15 @@ public class MainActivity extends Activity
 		} 
 	} 
 	
+	
+//	여기는 이진화 작업 구역입니다
 //	gray-scaling
 //	출처
 //	https://stackoverflow.com/questions/16333340/converting-simple-image-to-greyscale
 //	참고
 //	https://developer.android.com/reference/android/graphics/Bitmap
+//	https://developer.android.com/reference/android/graphics/Bitmap.Config
+//	https://developer.android.com/reference/android/graphics/Canvas?hl=en
 	private Bitmap grayScale(final Bitmap orgBitmap) {
 	    int width, height;
 	    height = orgBitmap.getHeight();
@@ -130,32 +138,46 @@ public class MainActivity extends Activity
 	    Canvas canvas = new Canvas(bmpGrayscale);
 	    Paint paint = new Paint();
 	    
+//	    ColorMatrix colorMatrix = new ColorMatrix();
+//	    colorMatrix.setSaturation(0);
+	    
+//	ColorMatrix를 활용한 이진화
+//	출처
+//	https://stackoverflow.com/questions/16375471/binarize-image-in-android
 	    ColorMatrix colorMatrix = new ColorMatrix();
-	    colorMatrix.setSaturation(0);
+	    float a = 77f;
+	    float b = 151f;
+	    float c = 28f;
+	    float t = 120 * -256f;
+	    colorMatrix.set(new float[] { a, b, c, 0, t, a, b, c, 0, t, a, b, c, 0, t, 0, 0, 0, 1, 0 });
+	    paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
+	    
+	    
 	    ColorMatrixColorFilter colorMatrixFilter = new ColorMatrixColorFilter(colorMatrix);
 	    paint.setColorFilter(colorMatrixFilter);
 	    canvas.drawBitmap(orgBitmap, 0, 0, paint);
 	    return bmpGrayscale;
 	}
 	
+//	여기까지 이진화 작업 구역입니다
 	
-	private 
+//	private 
 	
 	
 
 	//// 이미지 resize with 가로폭 픽셀, 출처: https://dwfox.tistory.com/37  
-	private Bitmap resizeBitmap(Bitmap original, int resizeWidth) {
-		 
-	    ////int resizeWidth = 200;
-	 
-	    double aspectRatio = (double) original.getHeight() / (double) original.getWidth();
-	    int targetHeight = (int) (resizeWidth * aspectRatio);
-	    Bitmap result = Bitmap.createScaledBitmap(original, resizeWidth, targetHeight, false);
-	    if (result != original) {
-	        original.recycle();
-	    }
-	    return result;
-	}
+//	private Bitmap resizeBitmap(Bitmap original, int resizeWidth) {
+//		 
+//	    ////int resizeWidth = 200;
+//	 
+//	    double aspectRatio = (double) original.getHeight() / (double) original.getWidth();
+//	    int targetHeight = (int) (resizeWidth * aspectRatio);
+//	    Bitmap result = Bitmap.createScaledBitmap(original, resizeWidth, targetHeight, false);
+//	    if (result != original) {
+//	        original.recycle();
+//	    }
+//	    return result;
+//	}
 	
 	//// 이미지 resize by ratio, 출처: https://it77.tistory.com/99
 	private Bitmap resize_samplesize (Bitmap original, int samplesize) {
