@@ -128,7 +128,6 @@ public class MainActivity extends Activity
 //	참고
 //	https://developer.android.com/reference/android/graphics/Bitmap
 //	https://developer.android.com/reference/android/graphics/Bitmap.Config
-//	https://developer.android.com/reference/android/graphics/Canvas?hl=en
 // 	https://developer.android.com/reference/android/graphics/ColorMatrix
 // 	https://developer.android.com/reference/android/graphics/ColorFilter
 	private Bitmap grayScale(final Bitmap orgBitmap) {
@@ -147,18 +146,12 @@ public class MainActivity extends Activity
 //	출처
 //	https://stackoverflow.com/questions/16375471/binarize-image-in-android
 // 	binarization을 위한 filter matrix 설계
-// 	참고
-//	https://developer.android.com/reference/android/graphics/Color
-// 	https://www.rapidtables.com/convert/number/hex-to-decimal.html
-//	https://developer.android.com/reference/android/graphics/ColorSpace.Model.html#RGB
-// 	https://developer.android.com/reference/android/graphics/Paint.html
-// 	https://developer.android.com/reference/android/graphics/drawable/Drawable
 	    ColorMatrix colorMatrix = new ColorMatrix();
 	    float a = 77f;
 	    float b = 151f;
 	    float c = 28f;
 	    float t = 120 * -256f;
-	    colorMatrix.set(new float[] { a, b, c, 0, t, a, b, c, 0, t, a, b, c, 0, t, 0, 0, 0, 1, 0 });
+	    colorMatrix.set(new float[] { a, b, c, 0, t, a, b, c, 0, t, a, b, c, 0, t, 0, 0, 0, 2, 0 });
 // 	    colorMatrix == [
 // 	    a, b, c, 0, t -> red vector
 // 	    a, b, c, 0, t -> green vector
@@ -170,7 +163,16 @@ public class MainActivity extends Activity
 	    
 	    ColorMatrixColorFilter colorMatrixFilter = new ColorMatrixColorFilter(colorMatrix);
 	    paint.setColorFilter(colorMatrixFilter);
+	    
+//		캔버스에 bitmap 그림 그리는 과정
 	    canvas.drawBitmap(orgBitmap, 0, 0, paint);
+//	    https://developer.android.com/reference/android/graphics/Canvas?hl=en
+//	    public void drawBitmap (Bitmap bitmap, 
+//                float left, 
+//                float top, 
+//                Paint paint)
+	    
+//    	캔버스에 그려진 bitmap 그림을 반환
 	    return bmpGrayscale;
 	}
 	
