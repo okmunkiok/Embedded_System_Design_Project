@@ -172,7 +172,7 @@ public class MainActivity extends Activity
 //                float top, 
 //                Paint paint)
 	    
-//    	캔버스에 그려진 bitmap 그림을 반환
+// 	    캔버스에 그려진 bitmap 그림을 반환
 	    return bmpGrayscale;
 	}
 	
