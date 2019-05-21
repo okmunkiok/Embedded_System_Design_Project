@@ -21,7 +21,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import android.graphics.Matrix;
-//import for handle bmp by Matrix
+//import to handle bmp by Matrix
 
 
 
