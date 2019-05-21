@@ -164,7 +164,7 @@ public class MainActivity extends Activity
 	    ColorMatrixColorFilter colorMatrixFilter = new ColorMatrixColorFilter(colorMatrix);
 	    paint.setColorFilter(colorMatrixFilter);
 	    
-//		캔버스에 bitmap 그림 그리는 과정
+//	    캔버스에 bitmap 그림 그리는 과정
 	    canvas.drawBitmap(orgBitmap, 0, 0, paint);
 //	    https://developer.android.com/reference/android/graphics/Canvas?hl=en
 //	    public void drawBitmap (Bitmap bitmap, 
