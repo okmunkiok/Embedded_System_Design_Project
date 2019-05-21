@@ -158,7 +158,7 @@ public class MainActivity extends Activity
 // 	    a, b, c, 0, t -> blue vector
 // 	    0, 0, 0, 1, 0] -> alpha vector
 // 	    RGB system이 아니라 RGBA system임을 알 수 있다
-	    paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
+// 	    paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
 	    
 	    ColorMatrixColorFilter colorMatrixFilter = new ColorMatrixColorFilter(colorMatrix);
 	    paint.setColorFilter(colorMatrixFilter);
