@@ -121,7 +121,7 @@ public class MainActivity extends Activity
 	} 
 	
 	
-//	여기는 이진화 작업 구역입니다
+//	여기는 이진화 작업 (gray-scaling + binarization) 구역입니다
 //	gray-scaling
 //	출처
 //	https://stackoverflow.com/questions/16333340/converting-simple-image-to-greyscale
@@ -129,27 +129,42 @@ public class MainActivity extends Activity
 //	https://developer.android.com/reference/android/graphics/Bitmap
 //	https://developer.android.com/reference/android/graphics/Bitmap.Config
 //	https://developer.android.com/reference/android/graphics/Canvas?hl=en
+// 	https://developer.android.com/reference/android/graphics/ColorMatrix
+// 	https://developer.android.com/reference/android/graphics/ColorFilter
 	private Bitmap grayScale(final Bitmap orgBitmap) {
+// 	    기존 이미지에서 가로 세로 길이를 받아 저장하여, 새로 생성될 새 이미지 크기를 결정
+// 	    왜 새로운 이미지를 만드는가? -> 필터링 등의 이미지 처리를 하려면 원본 그 자체에 하면 안 되고 새로운 틀에 넣는 게 당연
 	    int width, height;
 	    height = orgBitmap.getHeight();
 	    width = orgBitmap.getWidth();
 	    Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 	    
+	    
 	    Canvas canvas = new Canvas(bmpGrayscale);
 	    Paint paint = new Paint();
-	    
-//	    ColorMatrix colorMatrix = new ColorMatrix();
-//	    colorMatrix.setSaturation(0);
-	    
-//	ColorMatrix를 활용한 이진화
+	    	    
+//	binarization using ColorMatrix
 //	출처
 //	https://stackoverflow.com/questions/16375471/binarize-image-in-android
+// 	binarization을 위한 filter matrix 설계
+// 	참고
+//	https://developer.android.com/reference/android/graphics/Color
+// 	https://www.rapidtables.com/convert/number/hex-to-decimal.html
+//	https://developer.android.com/reference/android/graphics/ColorSpace.Model.html#RGB
+// 	https://developer.android.com/reference/android/graphics/Paint.html
+// 	https://developer.android.com/reference/android/graphics/drawable/Drawable
 	    ColorMatrix colorMatrix = new ColorMatrix();
 	    float a = 77f;
 	    float b = 151f;
 	    float c = 28f;
 	    float t = 120 * -256f;
 	    colorMatrix.set(new float[] { a, b, c, 0, t, a, b, c, 0, t, a, b, c, 0, t, 0, 0, 0, 1, 0 });
+// 	    colorMatrix == [
+// 	    a, b, c, 0, t -> red vector
+// 	    a, b, c, 0, t -> green vector
+// 	    a, b, c, 0, t -> blue vector
+// 	    0, 0, 0, 1, 0] -> alpha vector
+// 	    RGB system이 아니라 RGBA system임을 알 수 있다
 	    paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
 	    
 	    
