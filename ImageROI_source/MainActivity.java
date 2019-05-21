@@ -138,14 +138,14 @@ public class MainActivity extends Activity
 	    width = orgBitmap.getWidth();
 	    Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 	    
-	    
+// 	    canvas와 paint를 활용하기 위한 선언. canvas에 새로 생성된 bitmap 파일을 inject하고 있다
 	    Canvas canvas = new Canvas(bmpGrayscale);
 	    Paint paint = new Paint();
 	    	    
-//	binarization using ColorMatrix
-//	출처
-//	https://stackoverflow.com/questions/16375471/binarize-image-in-android
-// 	binarization을 위한 filter matrix 설계
+// 	    binarization using ColorMatrix
+// 	    출처
+// 	    https://stackoverflow.com/questions/16375471/binarize-image-in-android
+// 	    binarization을 위한 filter matrix 설계
 	    ColorMatrix colorMatrix = new ColorMatrix();
 	    float a = 77f;
 	    float b = 151f;
@@ -159,7 +159,6 @@ public class MainActivity extends Activity
 // 	    0, 0, 0, 1, 0] -> alpha vector
 // 	    RGB system이 아니라 RGBA system임을 알 수 있다
 	    paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
-	    
 	    
 	    ColorMatrixColorFilter colorMatrixFilter = new ColorMatrixColorFilter(colorMatrix);
 	    paint.setColorFilter(colorMatrixFilter);
