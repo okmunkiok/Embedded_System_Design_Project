@@ -123,8 +123,6 @@ public class MainActivity extends Activity
 	
 //	여기는 이진화 작업 (gray-scaling + binarization) 구역입니다
 //	gray-scaling
-//	출처
-//	https://stackoverflow.com/questions/16333340/converting-simple-image-to-greyscale
 //	참고
 //	https://developer.android.com/reference/android/graphics/Bitmap
 //	https://developer.android.com/reference/android/graphics/Bitmap.Config
@@ -143,14 +141,8 @@ public class MainActivity extends Activity
 	    Paint paint = new Paint();
 	    	    
 // 	    binarization using ColorMatrix
-// 	    출처
-// 	    https://stackoverflow.com/questions/16375471/binarize-image-in-android
 // 	    binarization을 위한 filter matrix 설계
 	    ColorMatrix colorMatrix = new ColorMatrix();
-//	    float a = 77f;
-//	    float b = 151f;
-//	    float c = 28f;
-//	    float t = 120 * -256f;
 	    float red_ratio = (float) 0.2989 * 255;
 	    float green_ratio = (float) 0.5870 * 255;
 	    float blue_ratio = (float) 0.1140 * 255;
