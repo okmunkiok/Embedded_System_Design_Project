@@ -146,8 +146,8 @@ public class MainActivity extends Activity
 	    float red_ratio = (float) 0.2989 * 255;
 	    float green_ratio = (float) 0.5870 * 255;
 	    float blue_ratio = (float) 0.1140 * 255;
-	    float threshold_ratio = (float) 0.5;
-	    float up_scale = threshold_ratio * 255 * -255;
+	    float threshold_ratio = (float) 0.22;
+	    float up_scale = threshold_ratio * 255 * (-255);
 	    
 	    colorMatrix.set(new float[] { red_ratio, green_ratio, blue_ratio, 0, up_scale, red_ratio, green_ratio, blue_ratio, 0, up_scale, red_ratio, green_ratio, blue_ratio, 0, up_scale, 0, 0, 0, 1, 0 });
 // 	    colorMatrix == [
