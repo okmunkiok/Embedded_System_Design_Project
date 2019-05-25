@@ -8,10 +8,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,10 +15,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import android.graphics.Matrix;
-//import to handle bmp by Matrix
-
+//	import to handle bmp by Matrix
+//	import to handle Arrays
+//	mainly for checking Arrays' data right
 
 
 public class MainActivity extends Activity 
@@ -53,7 +48,7 @@ public class MainActivity extends Activity
 					startActivityForResult(intent, 1);
 				}
 				else if (v==button2) {
-					
+										
 					// 이진화 호출입니다
 					bitmap2 = grayScale(bitmap1);			//// 흑백 사진(grayscale)로 변경) + 이진화
 					
@@ -128,50 +123,42 @@ public class MainActivity extends Activity
 //	https://developer.android.com/reference/android/graphics/Bitmap.Config
 // 	https://developer.android.com/reference/android/graphics/ColorMatrix
 // 	https://developer.android.com/reference/android/graphics/ColorFilter
-	private Bitmap grayScale(final Bitmap orgBitmap) {
-// 	    기존 이미지에서 가로 세로 길이를 받아 저장하여, 새로 생성될 새 이미지 크기를 결정
-// 	    왜 새로운 이미지를 만드는가? -> 필터링 등의 이미지 처리를 하려면 원본 그 자체에 하면 안 되고 새로운 틀에 넣는 게 당연
-	    int width, height;
-	    height = orgBitmap.getHeight();
-	    width = orgBitmap.getWidth();
-	    Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-	    
-// 	    canvas와 paint를 활용하기 위한 선언. canvas에 새로 생성된 bitmap 파일을 inject하고 있다
-	    Canvas canvas = new Canvas(bmpGrayscale);
-	    Paint paint = new Paint();
-	    	    
-// 	    binarization using ColorMatrix
-// 	    binarization을 위한 filter matrix 설계
-	    ColorMatrix colorMatrix = new ColorMatrix();
-	    float red_ratio = (float) 0.2989 * 255;
-	    float green_ratio = (float) 0.5870 * 255;
-	    float blue_ratio = (float) 0.1140 * 255;
-	    float threshold_ratio = (float) 0.22;
-	    float up_scale = threshold_ratio * 255 * (-255);
-	    
-	    colorMatrix.set(new float[] { red_ratio, green_ratio, blue_ratio, 0, up_scale, red_ratio, green_ratio, blue_ratio, 0, up_scale, red_ratio, green_ratio, blue_ratio, 0, up_scale, 0, 0, 0, 1, 0 });
-// 	    colorMatrix == [
-// 	    a, b, c, 0, t -> red vector
-// 	    a, b, c, 0, t -> green vector
-// 	    a, b, c, 0, t -> blue vector
-// 	    0, 0, 0, 1, 0] -> alpha vector
-// 	    RGB system이 아니라 RGBA system임을 알 수 있다
-// 	    paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
-	    
-	    ColorMatrixColorFilter colorMatrixFilter = new ColorMatrixColorFilter(colorMatrix);
-	    paint.setColorFilter(colorMatrixFilter);
-	    
-//	    캔버스에 bitmap 그림 그리는 과정
-	    canvas.drawBitmap(orgBitmap, 0, 0, paint);
-//	    https://developer.android.com/reference/android/graphics/Canvas?hl=en
-//	    public void drawBitmap (Bitmap bitmap, 
-//                float left, 
-//                float top, 
-//                Paint paint)
-	    
-// 	    캔버스에 그려진 bitmap 그림을 반환
-	    return bmpGrayscale;
-	}
+	private Bitmap grayScale(final Bitmap orgBitmap){
+		int threshold = 70;
+		
+        int width = orgBitmap.getWidth();
+        int height = orgBitmap.getHeight();
+        
+        int [] pixels = new int [width * height];
+        orgBitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+ 
+        Bitmap bmpGrayScale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+ 
+        // color information
+        int A, R, G, B;
+        int index;
+        int gray_rgb;
+        
+        for(int y = 0; y < height; y++){
+        	for(int x = 0; x < width; x++){
+        		index = y * width + x;
+        		R = (pixels[index] >> 16) & 0xff;
+        		G = (pixels[index] >> 8) & 0xff;
+        		B = (pixels[index]) & 0xff;
+        		A = (pixels[index] >> 24) & 0xff;
+        		
+        		gray_rgb = (30 * R + 59 * G + 11 * B) / 100;
+        		
+        		if(gray_rgb > threshold)
+        			pixels[index] = (A << 24) | 0xffffff;
+        		else
+        			pixels[index] = (A << 24) | 0x000000;
+        	}
+        }
+        bmpGrayScale.setPixels(pixels, 0, width, 0, 0, width, height);
+        return bmpGrayScale;
+ 
+    }
 	
 //	여기까지 이진화 작업 구역입니다
 	
