@@ -124,7 +124,7 @@ public class MainActivity extends Activity
 // 	https://developer.android.com/reference/android/graphics/ColorMatrix
 // 	https://developer.android.com/reference/android/graphics/ColorFilter
 	private Bitmap grayScale(final Bitmap orgBitmap){
-		int threshold = 30;
+		int threshold = 30 * 100;
 		
         int width = orgBitmap.getWidth();
         int height = orgBitmap.getHeight();
@@ -142,17 +142,18 @@ public class MainActivity extends Activity
         for(int y = 0; y < height; y++){
         	for(int x = 0; x < width; x++){
         		index = y * width + x;
-        		R = (pixels[index] >> 16) & 0xff;
-        		G = (pixels[index] >> 8) & 0xff;
-        		B = (pixels[index]) & 0xff;
-        		A = (pixels[index] >> 24) & 0xff;
+        		int temp_pixel = pixels[index];
+        		R = (temp_pixel >> 16) & 0xff;
+        		G = (temp_pixel >> 8) & 0xff;
+        		B = (temp_pixel) & 0xff;
+//        		A = (pixels[index] >> 24) & 0xff;
         		
-        		gray_rgb = (30 * R + 59 * G + 11 * B) / 100;
+        		gray_rgb = (30 * R + 59 * G + 11 * B);
         		
         		if(gray_rgb > threshold)
-        			pixels[index] = (A << 24) | 0xffffff;
+        			pixels[index] = temp_pixel | 0xffffff;
         		else
-        			pixels[index] = (A << 24) | 0x000000;
+        			pixels[index] = temp_pixel | 0x000000;
         	}
         }
         bmpGrayScale.setPixels(pixels, 0, width, 0, 0, width, height);
