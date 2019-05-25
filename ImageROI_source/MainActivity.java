@@ -139,8 +139,8 @@ public class MainActivity extends Activity
         int index;
         int gray_rgb;
         
-        for(int y = 0; y < height; y++){
-        	for(int x = 0; x < width; x++){
+        for(int y = height - 1; y >= 0; y--){
+        	for(int x = width - 1; x >= 0; x--){
         		index = y * width + x;
         		int temp_pixel = pixels[index];
         		R = (temp_pixel >> 16) & 0xff;
@@ -148,7 +148,7 @@ public class MainActivity extends Activity
         		B = (temp_pixel) & 0xff;
 //        		A = (pixels[index] >> 24) & 0xff;
         		
-        		gray_rgb = (30 * R + 59 * G + 11 * B);
+        		gray_rgb = ((R << 5) - R - R) + ((G << 6) - G - G - G - G - G) + ((B << 3) + B + B + B);
         		
         		if(gray_rgb > threshold)
         			pixels[index] = temp_pixel | 0xffffff;
