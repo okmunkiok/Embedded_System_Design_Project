@@ -124,7 +124,7 @@ public class MainActivity extends Activity
 // 	https://developer.android.com/reference/android/graphics/ColorMatrix
 // 	https://developer.android.com/reference/android/graphics/ColorFilter
 	private Bitmap grayScale(final Bitmap orgBitmap){
-		int threshold = 70;
+		int threshold = 30;
 		
         int width = orgBitmap.getWidth();
         int height = orgBitmap.getHeight();
