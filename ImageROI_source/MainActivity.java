@@ -27,6 +27,7 @@ public class MainActivity extends Activity
 	Bitmap bitmap1; //// original image
 	Bitmap bitmap_binarized;
 	Bitmap bitmap_padded;
+	Bitmap bitmap_dilated;
 	Bitmap bitmap_resized;
 	
 	Bitmap bitmap2; //// processed image
@@ -52,30 +53,36 @@ public class MainActivity extends Activity
 					startActivityForResult(intent, 1);
 				}
 				else if (v==button2) {
-//					Toast.makeText(getApplicationContext(), "asdf", Toast.LENGTH_LONG).show();					
+//					Toast.makeText(getApplicationContext(), "asdf", Toast.LENGTH_LONG).show();
+					bitmap1 = resize_samplesize(bitmap1, 8);
 					int width = bitmap1.getWidth();
 			        int height = bitmap1.getHeight();
 			        
 					int [] pixels_array = new int [width * height];
+					int [] pixels_array_for_process = new int [width * height];
 					
 					Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
 					
 					// 이진화 호출입니다
 					bitmap_binarized = binarization(bitmap1, pixels_array, bitmap_sketch_book);			//// 흑백 사진(grayscale)로 변경) + 이진화
-					int pad_width = height / 10;
+					int pad_width = height / 6;
 //					Toast.makeText(getApplicationContext(), "asdf", Toast.LENGTH_LONG).show();
 					bitmap_padded = pad(bitmap_binarized, pixels_array, bitmap_sketch_book, pad_width);	// pad before image filtering
-					
-					bitmap2 = bitmap_binarized;
+					bitmap2 = bitmap_padded;
+					int dilation_width = 5;
+//					dilation_width must be odd number
+					bitmap_dilated = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, dilation_width);
+					bitmap2 = bitmap_dilated;
 //					bitmap2 = bitmap_padded;
+					
 					//// resize, 가로폭이 200 픽셀로 설정
 //					bitmap3 = resizeBitmap(bitmap2, 200);        
 					
 					//// resize, 비율이 1/8로 축소
 //					bitmap3 = resize_samplesize(bitmap1, 8);
-					bitmap3 = resize_samplesize(bitmap2, 8);
+//					bitmap3 = resize_samplesize(bitmap2, 8);
 					
-					imageView2.setImageBitmap(bitmap3); 	//// resize된 이진화된 이미지를 ImageView에 보임
+					imageView2.setImageBitmap(bitmap2); 	//// resize된 이진화된 이미지를 ImageView에 보임
 				
 					imageView2.setDrawingCacheEnabled(true);  //화면에 뿌릴때 캐시를 사용하게 한다
 
@@ -199,9 +206,9 @@ public class MainActivity extends Activity
 	    		gray_scaled_rgb = ((R << 5) - (R << 1)) + ((G << 6) - (G << 2) - G) + ((B << 3) + (B << 1) + B);
 	    		
 	    		if(gray_scaled_rgb > threshold)
-	    			pixels_array[index] = (A << 24) | 0xffffff;
+	    			pixels_array[index] = (A << 24) | 0xffffffff;
 	    		else
-	    			pixels_array[index] = (A << 24) | 0x000000;
+	    			pixels_array[index] = (A << 24) | 0xff000000;
 	    	}
 	    }
 	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
@@ -261,6 +268,55 @@ public class MainActivity extends Activity
         }
         
 		bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
+		
+		return bitmap_sketch_book;
+	}
+	
+	
+	public Bitmap dilation(final Bitmap before_dilation_bitmap_image, int[] pixels_array, int [] pixels_array_for_process, Bitmap bitmap_sketch_book, int dilation_width){
+		for(int i = pixels_array_for_process.length - 1; i >= 0 ; i--)
+			pixels_array_for_process[i] = 0xffffff00;
+		
+		int width = before_dilation_bitmap_image.getWidth();
+		int height = before_dilation_bitmap_image.getHeight();
+		
+		int [] dilation_matrix_array = new int [dilation_width * dilation_width];
+		int index;
+		int square_point;
+		int is_dilation = 0;
+		
+		for(index = dilation_matrix_array.length - 1; index >= 0; index--){
+			dilation_matrix_array[index] = 1;
+//			Toast.makeText(getApplicationContext(), Integer.toString(index) + "\n" + Integer.toString(dilation_matrix_array[index]), Toast.LENGTH_LONG).show();
+		}
+		
+		for(int y = dilation_width / 2; y < height - dilation_width / 2; y++){
+			for(int x = dilation_width / 2; x < width - dilation_width / 2; x++){
+				is_dilation = 0;
+				square_point = y * width + x;
+				
+				for(int z = - dilation_width / 2; z <= dilation_width / 2; z++){
+					index = (y + z) * width + x;
+					
+					for(int w = - dilation_width / 2; w <= dilation_width / 2 ; w++){
+						index = index + w;
+						if((pixels_array[index] & 0xff000000) == 0){
+							is_dilation = 1;
+							break;
+						}
+					}
+					if(is_dilation != 0)
+						break;
+				}
+				
+				if(is_dilation != 0)
+					pixels_array_for_process[square_point] = 0xff00ff00;
+
+			}
+		}
+        
+        
+		bitmap_sketch_book.setPixels(pixels_array_for_process, 0, width, 0, 0, width, height);
 		
 		return bitmap_sketch_book;
 	}
