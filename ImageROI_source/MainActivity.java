@@ -28,7 +28,11 @@ public class MainActivity extends Activity
 	Bitmap bitmap_binarized;
 	Bitmap bitmap_padded;
 	Bitmap bitmap_dilated;
+	Bitmap bitmap_eroded;
+	Bitmap bitmap_hit_or_miss_transformed;
+	
 	Bitmap bitmap_resized;
+	
 	
 	Bitmap bitmap2; //// processed image
 	Bitmap bitmap3; //// 2nd processed image
@@ -65,16 +69,26 @@ public class MainActivity extends Activity
 					
 					// 이진화 호출입니다
 					bitmap_binarized = binarization(bitmap1, pixels_array, bitmap_sketch_book);			//// 흑백 사진(grayscale)로 변경) + 이진화
+					
 					int pad_width = height / 6;
-//					Toast.makeText(getApplicationContext(), "asdf", Toast.LENGTH_LONG).show();
 					bitmap_padded = pad(bitmap_binarized, pixels_array, bitmap_sketch_book, pad_width);	// pad before image filtering
 					bitmap2 = bitmap_padded;
-					int dilation_width = 5;
+					
+					int dilation_width = 1;
 //					dilation_width must be odd number
 					bitmap_dilated = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, dilation_width);
 					bitmap2 = bitmap_dilated;
+					
+					int erosion_width = 1;
+//					erosion_width must be odd number
+					bitmap_eroded = erosion(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, erosion_width);
+					bitmap2 = bitmap_eroded;
 //					bitmap2 = bitmap_padded;
 					
+					int hit_or_miss_transform_width = 31;
+					bitmap_hit_or_miss_transformed = hit_or_miss_transfrom(bitmap2, pixels_array, bitmap_sketch_book, hit_or_miss_transform_width);
+					bitmap2 = bitmap_hit_or_miss_transformed;
+							
 					//// resize, 가로폭이 200 픽셀로 설정
 //					bitmap3 = resizeBitmap(bitmap2, 200);        
 					
@@ -206,9 +220,9 @@ public class MainActivity extends Activity
 	    		gray_scaled_rgb = ((R << 5) - (R << 1)) + ((G << 6) - (G << 2) - G) + ((B << 3) + (B << 1) + B);
 	    		
 	    		if(gray_scaled_rgb > threshold)
-	    			pixels_array[index] = (A << 24) | 0xffffffff;
+	    			pixels_array[index] = 0xffffffff;
 	    		else
-	    			pixels_array[index] = (A << 24) | 0xff000000;
+	    			pixels_array[index] = 0xff000000;
 	    	}
 	    }
 	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
@@ -220,26 +234,12 @@ public class MainActivity extends Activity
 	
 //	여기서부터 pad 구역입니다
 	
-	public Bitmap pad(final Bitmap before_padding_bitmap_image, int[] pixels_array, Bitmap bitmap_sketch_book, int pad_width){
+	public Bitmap pad (final Bitmap before_padding_bitmap_image, int[] pixels_array, Bitmap bitmap_sketch_book, int pad_width){
 		int width = before_padding_bitmap_image.getWidth();
 		int height = before_padding_bitmap_image.getHeight();
-//		Bitmap padded_bitmap_image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
-		
-//		Toast.makeText(getApplicationContext(), "asdf", Toast.LENGTH_LONG).show();
-//        Toast.makeText(getApplicationContext(), Integer.toString(width), Toast.LENGTH_LONG).show();
-//        Toast.makeText(getApplicationContext(), Integer.toString(height), Toast.LENGTH_LONG).show();
-        
-//        int [] pixels_array = new int [width * height];
-//        before_padding_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
-//        
+
         int index;
         
-//        for(int y = width / 2; y >= 0; y--){
-//        	for(int x = width / 2; x >= 0; x--){
-//        		index = y * width + x;
-//        		pixels_array[index] = pixels_array[index] & 0xff000000;
-//        	}
-//        }
         
         for(int y = pad_width - 1; y >= 0; y--){
         	for(int x = width - 1; x >= 0; x--){
@@ -273,15 +273,16 @@ public class MainActivity extends Activity
 	}
 	
 	
-	public Bitmap dilation(final Bitmap before_dilation_bitmap_image, int[] pixels_array, int [] pixels_array_for_process, Bitmap bitmap_sketch_book, int dilation_width){
+	public Bitmap dilation (final Bitmap before_dilation_bitmap_image, int[] pixels_array, int [] pixels_array_for_process, Bitmap bitmap_sketch_book, int dilation_width){
 		for(int i = pixels_array_for_process.length - 1; i >= 0 ; i--)
-			pixels_array_for_process[i] = 0xffffff00;
+			pixels_array_for_process[i] = 0xffffffff;
 		
 		int width = before_dilation_bitmap_image.getWidth();
 		int height = before_dilation_bitmap_image.getHeight();
 		
 		int [] dilation_matrix_array = new int [dilation_width * dilation_width];
 		int index;
+		int index_reference;
 		int square_point;
 		int is_dilation = 0;
 		
@@ -295,12 +296,12 @@ public class MainActivity extends Activity
 				is_dilation = 0;
 				square_point = y * width + x;
 				
-				for(int z = - dilation_width / 2; z <= dilation_width / 2; z++){
-					index = (y + z) * width + x;
+				for(int z = - (dilation_width / 2); z <= dilation_width / 2; z++){
+					index_reference = (y + z) * width + x;
 					
-					for(int w = - dilation_width / 2; w <= dilation_width / 2 ; w++){
-						index = index + w;
-						if((pixels_array[index] & 0xff000000) == 0){
+					for(int w = - (dilation_width / 2); w <= dilation_width / 2 ; w++){
+						index = index_reference + w;
+						if((pixels_array[index] | 0xff000000) == 0xff000000){
 							is_dilation = 1;
 							break;
 						}
@@ -310,13 +311,147 @@ public class MainActivity extends Activity
 				}
 				
 				if(is_dilation != 0)
-					pixels_array_for_process[square_point] = 0xff00ff00;
+					pixels_array_for_process[square_point] = 0xff000000;
 
 			}
 		}
         
+		
+		for(int i = pixels_array.length - 1; i >= 0 ; i--)
+			pixels_array[i] = pixels_array_for_process[i];
         
-		bitmap_sketch_book.setPixels(pixels_array_for_process, 0, width, 0, 0, width, height);
+		bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
+		
+		return bitmap_sketch_book;
+	}
+
+	public Bitmap erosion (final Bitmap before_erosion_bitmap_image, int[] pixels_array, int [] pixels_array_for_process, Bitmap bitmap_sketch_book, int erosion_width){
+		for(int i = pixels_array_for_process.length - 1; i >= 0 ; i--)
+			pixels_array_for_process[i] = 0xffffffff;
+		
+		int width = before_erosion_bitmap_image.getWidth();
+		int height = before_erosion_bitmap_image.getHeight();
+		
+		int [] erosion_matrix_array = new int [erosion_width * erosion_width];
+		int index;
+		int index_reference;
+		int square_point;
+		int is_erosion = 0;
+		int erosion_width_square = erosion_width * erosion_width;
+		int escape_for_double_for = 0;
+		
+		for(index = erosion_matrix_array.length - 1; index >= 0; index--){
+			erosion_matrix_array[index] = 1;
+//			Toast.makeText(getApplicationContext(), Integer.toString(index) + "\n" + Integer.toString(erosion_matrix_array[index]), Toast.LENGTH_LONG).show();
+		}
+		
+		for(int y = erosion_width / 2; y < height - erosion_width / 2; y++){
+			for(int x = erosion_width / 2; x < width - erosion_width / 2; x++){
+				is_erosion = 0;
+				escape_for_double_for = 0;
+				square_point = y * width + x;
+				
+				for(int z = - (erosion_width / 2); z <= erosion_width / 2; z++){
+					index_reference = (y + z) * width + x;
+					
+					for(int w = - (erosion_width / 2); w <= erosion_width / 2 ; w++){
+						index = index_reference + w;
+						if((pixels_array[index] | 0xff000000) != 0xff000000){
+							escape_for_double_for = 1;
+							break;
+						}
+						is_erosion ++;
+					}
+					
+					if(escape_for_double_for != 0)
+						break;
+				}
+				
+				if(is_erosion == erosion_width_square)
+					pixels_array_for_process[square_point] = 0xff000000;
+
+			}
+		}
+        
+		
+		for(int i = pixels_array.length - 1; i >= 0 ; i--)
+			pixels_array[i] = pixels_array_for_process[i];
+        
+		bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
+		
+		return bitmap_sketch_book;
+	}
+	
+	public Bitmap hit_or_miss_transfrom (final Bitmap before_hit_or_miss_transform_bitmap_image, int[] pixels_array, Bitmap bitmap_sketch_book, int hit_or_miss_transform_width){
+		int width = before_hit_or_miss_transform_bitmap_image.getWidth();
+		int height = before_hit_or_miss_transform_bitmap_image.getHeight();
+		
+		int [] pixels_array_for_erosion = new int [width * height];
+		Bitmap bitmap_for_temp_erosion = erosion(before_hit_or_miss_transform_bitmap_image, pixels_array, pixels_array_for_erosion, bitmap_sketch_book, hit_or_miss_transform_width);
+		bitmap_for_temp_erosion.getPixels(pixels_array_for_erosion, 0, width, 0, 0, width, height);
+//		for(int i = pixels_array_for_erosion.length - 1; i >= 0; i--)
+//			pixels_array_for_erosion[i] = 0xffffff;
+		
+		
+		int [] pixels_array_for_dilation = new int [width * height];
+		for(int i = pixels_array_for_dilation.length - 1; i >= 0; i--)
+			pixels_array_for_dilation[i] = 0xffffff;
+		
+		
+		
+		
+//		
+//		
+//		for(int i = pixels_array_for_process.length - 1; i >= 0 ; i--)
+//			pixels_array_for_process[i] = 0xffffffff;
+//		
+//		
+//		int [] erosion_matrix_array = new int [erosion_width * erosion_width];
+//		int index;
+//		int index_reference;
+//		int square_point;
+//		int is_erosion = 0;
+//		int erosion_width_square = erosion_width * erosion_width;
+//		int escape_for_double_for = 0;
+//		
+//		for(index = erosion_matrix_array.length - 1; index >= 0; index--){
+//			erosion_matrix_array[index] = 1;
+////			Toast.makeText(getApplicationContext(), Integer.toString(index) + "\n" + Integer.toString(erosion_matrix_array[index]), Toast.LENGTH_LONG).show();
+//		}
+//		
+//		for(int y = erosion_width / 2; y < height - erosion_width / 2; y++){
+//			for(int x = erosion_width / 2; x < width - erosion_width / 2; x++){
+//				is_erosion = 0;
+//				escape_for_double_for = 0;
+//				square_point = y * width + x;
+//				
+//				for(int z = - (erosion_width / 2); z <= erosion_width / 2; z++){
+//					index_reference = (y + z) * width + x;
+//					
+//					for(int w = - (erosion_width / 2); w <= erosion_width / 2 ; w++){
+//						index = index_reference + w;
+//						if((pixels_array[index] | 0xff000000) != 0xff000000){
+//							escape_for_double_for = 1;
+//							break;
+//						}
+//						is_erosion ++;
+//					}
+//					
+//					if(escape_for_double_for != 0)
+//						break;
+//				}
+//				
+//				if(is_erosion == erosion_width_square)
+//					pixels_array_for_process[square_point] = 0xff000000;
+//
+//			}
+//		}
+//        
+//		
+//		for(int i = pixels_array.length - 1; i >= 0 ; i--)
+//			pixels_array[i] = pixels_array_for_process[i];
+        
+		bitmap_sketch_book.setPixels(pixels_array_for_erosion, 0, width, 0, 0, width, height);
 		
 		return bitmap_sketch_book;
 	}
