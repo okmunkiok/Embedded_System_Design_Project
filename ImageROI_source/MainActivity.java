@@ -25,6 +25,10 @@ public class MainActivity extends Activity
 	ImageView imageView1, imageView2; //// ImageView1은 원래 이미지를 보이고 ImageView2는 이미지의 이진화 결과를 보임 
 	Button button1, button2; 
 	Bitmap bitmap1; //// original image
+	Bitmap bitmap_binzarized;
+	Bitmap bitmap_padded;
+	Bitmap bitmap_resized;
+	
 	Bitmap bitmap2; //// processed image
 	Bitmap bitmap3; //// 2nd processed image
 	
@@ -50,10 +54,14 @@ public class MainActivity extends Activity
 				else if (v==button2) {
 										
 					// 이진화 호출입니다
-					bitmap2 = grayScale(bitmap1);			//// 흑백 사진(grayscale)로 변경) + 이진화
+					bitmap_binzarized = binarization(bitmap1);			//// 흑백 사진(grayscale)로 변경) + 이진화
+					int pad_width = 30;
+					bitmap_padded = pad(bitmap_binzarized, pad_width);	// pad before image filtering
 					
+					bitmap2 = bitmap_binzarized;
+//					bitmap2 = bitmap_padded;
 					//// resize, 가로폭이 200 픽셀로 설정
-					////bitmap3 = resizeBitmap(bitmap2, 200);        
+//					bitmap3 = resizeBitmap(bitmap2, 200);        
 					
 					//// resize, 비율이 1/8로 축소
 					bitmap3 = resize_samplesize(bitmap2, 8);
@@ -123,45 +131,103 @@ public class MainActivity extends Activity
 //	https://developer.android.com/reference/android/graphics/Bitmap.Config
 // 	https://developer.android.com/reference/android/graphics/ColorMatrix
 // 	https://developer.android.com/reference/android/graphics/ColorFilter
-	private Bitmap grayScale(final Bitmap orgBitmap){
+	private Bitmap binarization(final Bitmap before_binarization_bitmap_image){
 		int threshold = 30 * 100;
 		
-        int width = orgBitmap.getWidth();
-        int height = orgBitmap.getHeight();
+        int width = before_binarization_bitmap_image.getWidth();
+        int height = before_binarization_bitmap_image.getHeight();
+        Bitmap gray_scaled_bitmap_image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
         
-        int [] pixels = new int [width * height];
-        orgBitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+//        Toast.makeText(getApplicationContext(), Integer.toString(width), Toast.LENGTH_LONG).show();
+//        Toast.makeText(getApplicationContext(), Integer.toString(height), Toast.LENGTH_LONG).show();
+        
+        int [] pixels_array = new int [width * height];
+        before_binarization_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
  
-        Bitmap bmpGrayScale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
  
         // color information
         int A, R, G, B;
         int index;
-        int gray_rgb;
+        int gray_scaled_rgb;
         
         for(int y = height - 1; y >= 0; y--){
         	for(int x = width - 1; x >= 0; x--){
         		index = y * width + x;
-        		int temp_pixel = pixels[index];
+        		int temp_pixel = pixels_array[index];
         		R = (temp_pixel >> 16) & 0xff;
         		G = (temp_pixel >> 8) & 0xff;
         		B = (temp_pixel) & 0xff;
 //        		A = (pixels[index] >> 24) & 0xff;
         		
-        		gray_rgb = ((R << 5) - (R << 1)) + ((G << 6) - (G << 2) - G) + ((B << 3) + (B << 1) + B);
+        		gray_scaled_rgb = ((R << 5) - (R << 1)) + ((G << 6) - (G << 2) - G) + ((B << 3) + (B << 1) + B);
         		
-        		if(gray_rgb > threshold)
-        			pixels[index] = temp_pixel | 0xffffff;
+        		if(gray_scaled_rgb > threshold)
+        			pixels_array[index] = temp_pixel | 0xffffff;
         		else
-        			pixels[index] = temp_pixel | 0x000000;
+        			pixels_array[index] = temp_pixel | 0x000000;
         	}
         }
-        bmpGrayScale.setPixels(pixels, 0, width, 0, 0, width, height);
-        return bmpGrayScale;
- 
+        gray_scaled_bitmap_image.setPixels(pixels_array, 0, width, 0, 0, width, height);
+        
+        return gray_scaled_bitmap_image;
     }
 	
 //	여기까지 이진화 작업 구역입니다
+	
+	
+	private Bitmap pad(final Bitmap before_padding_bitmap_image, int pad_width){
+		int width = before_padding_bitmap_image.getWidth();
+        int height = before_padding_bitmap_image.getHeight();
+        Bitmap padded_bitmap_image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+		
+        Toast.makeText(getApplicationContext(), Integer.toString(width), Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), Integer.toString(height), Toast.LENGTH_LONG).show();
+        
+//        int [] pixels_array = new int [width * height];
+//        before_padding_bitmap_image.getpixels_array(pixels_array, 0, width, 0, 0, width, height);
+//        
+//        int index;
+        
+//        for(int y = width / 2; y >= 0; y--){
+//        	for(int x = width / 2; x >= 0; x--){
+//        		index = y * width + x;
+//        		pixels_array[index] = pixels_array[index] | 0x000000;
+//        	}
+//        }
+        
+//        for(int y = pad_width - 1; y >= 0; y--){
+//        	for(int x = width - 1; x >= 0; x--){
+//        		index = y * width + x;
+//        		pixels_array[index] = pixels_array[index] | 0x000000;
+//        	}
+//        }
+//        
+//        for(int y = height - 1; y >= height - pad_width; y--){
+//        	for(int x = width - 1; x >= 0; x--){
+//        		index = y * width + x;
+//        		pixels_array[index] = pixels_array[index] | 0x000000;
+//        	}
+//        }
+//        for(int y = height - 1; y >= 0; y--){
+//        	for(int x = pad_width - 1; x >= 0; x--){
+//        		index = y * width + x;
+//        		pixels_array[index] = pixels_array[index] | 0x000000;
+//        	}
+//        }
+//        for(int y = height - 1; y >= 0; y--){
+//        	for(int x = width - 1; x >= width - pad_width; x--){
+//        		index = y * width + x;
+//        		pixels_array[index] = pixels_array[index] | 0xffffff;
+//        	}
+//        }
+        
+//        padded_bitmap_image.setpixels_array(pixels_array, 0, width, 0, 0, width, height);
+
+//		return padded_bitmap_image;
+		return before_padding_bitmap_image;
+	}
+	
+	
 	
 //	private 
 	
