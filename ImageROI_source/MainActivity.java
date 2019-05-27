@@ -148,7 +148,7 @@ public class MainActivity extends Activity
         		B = (temp_pixel) & 0xff;
 //        		A = (pixels[index] >> 24) & 0xff;
         		
-        		gray_rgb = ((R << 5) - R - R) + ((G << 6) - G - G - G - G - G) + ((B << 3) + B + B + B);
+        		gray_rgb = ((R << 5) - (R << 1)) + ((G << 6) - (G << 2) - G) + ((B << 3) + (B << 1) + B);
         		
         		if(gray_rgb > threshold)
         			pixels[index] = temp_pixel | 0xffffff;
