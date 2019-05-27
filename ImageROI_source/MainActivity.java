@@ -173,7 +173,9 @@ public class MainActivity extends Activity
     }
 	
 //	여기까지 이진화 작업 구역입니다
+
 	
+//	여기서부터 pad 구역입니다
 	
 	private Bitmap pad(final Bitmap before_padding_bitmap_image, int pad_width){
 		int width = before_padding_bitmap_image.getWidth();
@@ -228,6 +230,7 @@ public class MainActivity extends Activity
 	}
 	
 	
+//	여기까지 pad 구역이었습니다
 	
 //	private 
 	
