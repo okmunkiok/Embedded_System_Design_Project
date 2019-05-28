@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <SurfaceView
+        android:id="@+id/surfPreview"
+        android:layout_width="292dp"
+        android:layout_height="95dp"
+        android:layout_margin="4dp"
+        android:layout_weight="0.41" />
+
+    <ImageView
+        android:id="@+id/imgViewPicture"
+        android:layout_width="292dp"
+        android:layout_height="95dp"
+        android:layout_centerHorizontal="true"
+        android:layout_weight="0.82" />
+
+    <ImageView
+        android:id="@+id/imgViewBinarizedPicture"
+        android:layout_width="292dp"
+        android:layout_height="95dp"
+        android:layout_weight="1.01" />
+
+    <Button
+        android:id="@+id/btnTakePicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:onClick="mOnClick"
+        android:text="사진 찍기" />
+
+    <Button
+        android:id="@+id/btnBinarize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:onClick="mOnClick"
+        android:text="이진화" />
+
+</LinearLayout>
