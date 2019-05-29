@@ -69,25 +69,35 @@ public class MainActivity extends Activity
 					
 					// 이진화 호출입니다
 					bitmap_binarized = binarization(bitmap1, pixels_array, bitmap_sketch_book);			//// 흑백 사진(grayscale)로 변경) + 이진화
+					bitmap2 = bitmap_binarized;
 					
-					int pad_width = height / 6;
-					bitmap_padded = pad(bitmap_binarized, pixels_array, bitmap_sketch_book, pad_width);	// pad before image filtering
-					bitmap2 = bitmap_padded;
-					
-					int dilation_width = 1;
-//					dilation_width must be odd number
-					bitmap_dilated = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, dilation_width);
-					bitmap2 = bitmap_dilated;
-					
-					int erosion_width = 1;
-//					erosion_width must be odd number
-					bitmap_eroded = erosion(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, erosion_width);
-					bitmap2 = bitmap_eroded;
+//					int pad_width = height / 10;
+//					bitmap_padded = pad(bitmap_binarized, pixels_array, bitmap_sketch_book, pad_width);	// pad before image filtering
 //					bitmap2 = bitmap_padded;
 					
-					int hit_or_miss_transform_width = 31;
-					bitmap_hit_or_miss_transformed = hit_or_miss_transfrom(bitmap2, pixels_array, bitmap_sketch_book, hit_or_miss_transform_width);
-					bitmap2 = bitmap_hit_or_miss_transformed;
+					int dilation_width = 7;
+//					dilation_width must be odd number
+					bitmap_dilated = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, dilation_width);
+					bitmap2 = bitmap_dilated;					
+						
+					int erosion_width = 9;
+////					erosion_width must be odd number
+					bitmap_eroded = erosion(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, erosion_width);
+					bitmap2 = bitmap_eroded;
+//					
+//					int dilation_width = 17;
+////					dilation_width must be odd number
+//					bitmap_dilated = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, dilation_width);
+//					bitmap2 = bitmap_dilated;
+//					
+//					erosion_width = 17;
+////					erosion_width must be odd number
+//					bitmap_eroded = erosion(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, erosion_width);
+//					bitmap2 = bitmap_eroded;
+					
+//					int hit_or_miss_transform_width = 31;
+//					bitmap_hit_or_miss_transformed = hit_or_miss_transfrom(bitmap2, pixels_array, bitmap_sketch_book, hit_or_miss_transform_width);
+//					bitmap2 = bitmap_hit_or_miss_transformed;
 							
 					//// resize, 가로폭이 200 픽셀로 설정
 //					bitmap3 = resizeBitmap(bitmap2, 200);        
