@@ -58,9 +58,9 @@ public class MainActivity extends Activity
 				}
 				else if (v==button2) {
 //					Toast.makeText(getApplicationContext(), "asdf", Toast.LENGTH_LONG).show();
-					bitmap1 = resize_samplesize(bitmap1, 8);
-					int width = bitmap1.getWidth();
-			        int height = bitmap1.getHeight();
+					bitmap2 = resize_samplesize(bitmap1, 8);
+					int width = bitmap2.getWidth();
+			        int height = bitmap2.getHeight();
 			        
 					int [] pixels_array = new int [width * height];
 					int [] pixels_array_for_process = new int [width * height];
@@ -68,22 +68,19 @@ public class MainActivity extends Activity
 					Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
 					
 					// 이진화 호출입니다
-					bitmap_binarized = binarization(bitmap1, pixels_array, bitmap_sketch_book);			//// 흑백 사진(grayscale)로 변경) + 이진화
-					bitmap2 = bitmap_binarized;
+					bitmap2 = binarization(bitmap2, pixels_array, bitmap_sketch_book);			//// 흑백 사진(grayscale)로 변경) + 이진화
+//					bitmap2 = bitmap_binarized;
 					
 //					int pad_width = height / 10;
-//					bitmap_padded = pad(bitmap_binarized, pixels_array, bitmap_sketch_book, pad_width);	// pad before image filtering
-//					bitmap2 = bitmap_padded;
+//					bitmap2 = pad(bitmap_binarized, pixels_array, bitmap_sketch_book, pad_width);	// pad before image filtering
 					
-					int dilation_width = 7;
+//					int dilation_width = 7;
 //					dilation_width must be odd number
-					bitmap_dilated = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, dilation_width);
-					bitmap2 = bitmap_dilated;					
+//					bitmap2 = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, dilation_width);		
 						
-					int erosion_width = 9;
+//					int erosion_width = 9;
 ////					erosion_width must be odd number
-					bitmap_eroded = erosion(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, erosion_width);
-					bitmap2 = bitmap_eroded;
+//					bitmap2 = erosion(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, erosion_width);
 //					
 //					int dilation_width = 17;
 ////					dilation_width must be odd number
@@ -199,7 +196,7 @@ public class MainActivity extends Activity
 //		https://developer.android.com/reference/android/graphics/ColorMatrix
 //		https://developer.android.com/reference/android/graphics/ColorFilter
 	public Bitmap binarization(final Bitmap before_binarization_bitmap_image, int [] pixels_array, Bitmap bitmap_sketch_book){
-		int threshold = 30 * 100;
+		int threshold = 150 * 100;
 		
 	    int width = before_binarization_bitmap_image.getWidth();
 	    int height = before_binarization_bitmap_image.getHeight();
@@ -387,6 +384,7 @@ public class MainActivity extends Activity
 		for(int i = pixels_array.length - 1; i >= 0 ; i--)
 			pixels_array[i] = pixels_array_for_process[i];
         
+		
 		bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
 		
 		return bitmap_sketch_book;
