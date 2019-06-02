@@ -29,6 +29,9 @@ public class MainActivity extends Activity
 	Bitmap bitmap_padded;
 	Bitmap bitmap_dilated;
 	Bitmap bitmap_eroded;
+	
+	int filter_width = 0;
+	
 	Bitmap bitmap_hit_or_miss_transformed;
 	
 	Bitmap bitmap_resized;
@@ -68,18 +71,22 @@ public class MainActivity extends Activity
 					Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
 					
 					// 이진화 호출입니다
+					bitmap2 = gray_scaling(bitmap2, pixels_array, bitmap_sketch_book);
+					filter_width = 4;
+					bitmap2 = gaussian_filtering(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, filter_width);
 					bitmap2 = binarization(bitmap2, pixels_array, bitmap_sketch_book);			//// 흑백 사진(grayscale)로 변경) + 이진화
+//					bitmap2 = detect_the_number_area(bitmap2, pixels_array, bitmap_sketch_book);
 //					bitmap2 = bitmap_binarized;
 					
 //					int pad_width = height / 10;
 //					bitmap2 = pad(bitmap_binarized, pixels_array, bitmap_sketch_book, pad_width);	// pad before image filtering
 					
-//					int dilation_width = 7;
-//					dilation_width must be odd number
+//					dilation_width = 3;
+////					dilation_width must be odd number
 //					bitmap2 = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, dilation_width);		
 						
-//					int erosion_width = 9;
-////					erosion_width must be odd number
+//					erosion_width = 3;
+//////					erosion_width must be odd number
 //					bitmap2 = erosion(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, erosion_width);
 //					
 //					int dilation_width = 17;
@@ -188,6 +195,47 @@ public class MainActivity extends Activity
 	}
 	
 
+	public Bitmap gray_scaling(final Bitmap before_binarization_bitmap_image, int [] pixels_array, Bitmap bitmap_sketch_book){
+		int threshold = 150 * 100;
+		
+	    int width = before_binarization_bitmap_image.getWidth();
+	    int height = before_binarization_bitmap_image.getHeight();
+//	    Bitmap gray_scaled_bitmap_image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+	    
+//	    Toast.makeText(getApplicationContext(), Integer.toString(width), Toast.LENGTH_LONG).show();
+//	    Toast.makeText(getApplicationContext(), Integer.toString(height), Toast.LENGTH_LONG).show();
+	    
+//	    int [] pixels_array = new int [width * height];
+	    
+	    before_binarization_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
+
+
+	    // color information
+	    int A, R, G, B;
+	    int index;
+	    int gray_scaled_rgb;
+	    
+	    for(int y = height - 1; y >= 0; y--){
+	    	for(int x = width - 1; x >= 0; x--){
+	    		index = y * width + x;
+	    		int temp_pixel = pixels_array[index];
+	    		R = (temp_pixel >> 16) & 0xff;
+	    		G = (temp_pixel >> 8) & 0xff;
+	    		B = (temp_pixel) & 0xff;
+	    		A = (temp_pixel >> 24) & 0xff;
+	    		
+	    		gray_scaled_rgb = ((R << 5) - (R << 1)) + ((G << 6) - (G << 2) - G) + ((B << 3) + (B << 1) + B);
+	    		gray_scaled_rgb /= 100;
+	    		
+	    		pixels_array[index] = (A << 24) | (gray_scaled_rgb << 16) | (gray_scaled_rgb << 8) | (gray_scaled_rgb);
+	    	}
+	    }
+	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
+	    
+	    return bitmap_sketch_book;
+	}
+	
+	
 	//여기는 이진화 작업 (gray-scaling + binarization) 구역입니다
 	//gray-scaling
 	//참고
@@ -236,8 +284,12 @@ public class MainActivity extends Activity
 	    
 	    return bitmap_sketch_book;
 	}
+	
+	
+	
+	
+	
 
-	//여기까지 이진화 작업 구역입니다
 	
 //	여기서부터 pad 구역입니다
 	
@@ -463,6 +515,139 @@ public class MainActivity extends Activity
 		
 		return bitmap_sketch_book;
 	}
+	
+	
+	
+	public Bitmap detect_the_number_area(final Bitmap before_binarization_bitmap_image, int [] pixels_array, Bitmap bitmap_sketch_book){
+//		int threshold = 150 * 100;
+		int threshold_of_number_of_color_changed = 16;
+		int number_of_color_changed = 0;
+		
+	    int width = before_binarization_bitmap_image.getWidth();
+	    int height = before_binarization_bitmap_image.getHeight();
+//	    Bitmap gray_scaled_bitmap_image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+	    
+//	    Toast.makeText(getApplicationContext(), Integer.toString(width), Toast.LENGTH_LONG).show();
+//	    Toast.makeText(getApplicationContext(), Integer.toString(height), Toast.LENGTH_LONG).show();
+	    
+//	    int [] pixels_array = new int [width * height];
+	    
+	    before_binarization_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
+
+
+	    // color information
+	    int A, R, G, B;
+	    int index;
+	    int gray_scaled_rgb;
+	    
+	    for(int y = 0; y < height; y++){
+	    	number_of_color_changed = 0;
+	    	for(int x = 0; x < width - 1; x ++){
+	    		index = y * width + x;
+	    		if(pixels_array[index] != pixels_array[index + 1])
+	    			number_of_color_changed += 1;
+	    		if(number_of_color_changed >= threshold_of_number_of_color_changed){
+	    			for(x = 0; x < width; x ++){
+			    		index = y * width + x;
+			    		pixels_array[index] = 0xffff0000;
+			    	}
+	    			break;
+	    		}
+	    	}
+	    	
+	    }
+	    
+
+	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
+	    
+	    return bitmap_sketch_book;
+	}
+	
+	
+	
+	public Bitmap gaussian_filtering (final Bitmap before_dilation_bitmap_image, int[] pixels_array, int [] pixels_array_for_process, Bitmap bitmap_sketch_book, int filter_width){
+		for(int i = pixels_array_for_process.length - 1; i >= 0 ; i--)
+			pixels_array_for_process[i] = 0xffffffff;
+		
+		int width = before_dilation_bitmap_image.getWidth();
+		int height = before_dilation_bitmap_image.getHeight();
+		
+		int A, R, G, B;
+		int R_sum, G_sum, B_sum;
+//	    int gray_scaled_rgb;
+	    
+		int index;
+		int index_reference;
+		int index_for_filter = 0;
+		int square_point;
+		int filter_image_element_sum = 0;
+		int is_dilation = 0;
+		
+		int filter_element_sum_for_remaking_sum_to_1 = 0;
+		int [] filter_matrix_array = new int [filter_width * filter_width];
+		for(int i = 0; i < filter_matrix_array.length / 2; i ++){
+			filter_matrix_array[i] = (i + 1);
+			filter_matrix_array[(filter_matrix_array.length - 1) - i] = (i + 1);
+		}
+		filter_matrix_array[filter_matrix_array.length / 2 + 1] = filter_matrix_array[filter_matrix_array.length / 2] + 1; 
+		for(int i = 0; i < filter_matrix_array.length; i++)
+			filter_element_sum_for_remaking_sum_to_1 += filter_matrix_array[i]; 
+		for(int i = 0; i < filter_matrix_array.length; i++)
+			filter_matrix_array[i] /= filter_element_sum_for_remaking_sum_to_1; 
+		
+		
+		for(int y = filter_width / 2; y < height - filter_width / 2; y++){
+			for(int x = filter_width / 2; x < width - filter_width / 2; x++){
+				square_point = y * width + x;
+				index_for_filter = 0;
+				R_sum = 0;
+				G_sum = 0;
+				B_sum = 0;
+				
+				for(int z = - (filter_width / 2); z <= filter_width / 2; z++){
+					index_reference = (y + z) * width + x;
+					
+					for(int w = - (filter_width / 2); w <= filter_width / 2 ; w++){
+						index = index_reference + w;
+						pixels_array_for_process[square_point] += (pixels_array[index] * filter_matrix_array[index_for_filter]);
+						
+						
+						int temp_pixel = pixels_array[index];
+			    		R = (temp_pixel >> 16) & 0xff;
+			    		G = (temp_pixel >> 8) & 0xff;
+			    		B = (temp_pixel) & 0xff;
+			    		A = (temp_pixel >> 24) & 0xff;
+			    		
+//			    		R_sum += (R * filter_matrix_array[index_for_filter]);
+//			    		G_sum += (G * filter_matrix_array[index_for_filter]);
+//			    		B_sum += (B * filter_matrix_array[index_for_filter]);
+//			    		
+//			    		gray_scaled_rgb = ((R << 5) - (R << 1)) + ((G << 6) - (G << 2) - G) + ((B << 3) + (B << 1) + B);
+//			    		gray_scaled_rgb /= 100;
+//			    		
+//			    		pixels_array[index] = (A << 24) | (gray_scaled_rgb << 16) | (gray_scaled_rgb << 8) | (gray_scaled_rgb);
+//						
+						index_for_filter += 1;
+					}
+				}
+				R_sum /= 100;
+				G_sum /= 100;
+				B_sum /= 100;
+				int gray_scaled_rgb = ((R_sum << 5) - (R_sum << 1)) + ((G_sum << 6) - (G_sum << 2) - G_sum) + ((B_sum << 3) + (B_sum << 1) + B_sum);
+				pixels_array_for_process[square_point] = 0xff000000 | (gray_scaled_rgb << 16) | (gray_scaled_rgb << 8) | (gray_scaled_rgb);
+
+			}
+		}
+        
+		
+		for(int i = pixels_array.length - 1; i >= 0 ; i--)
+			pixels_array[i] = pixels_array_for_process[i];
+        
+		bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
+		
+		return bitmap_sketch_book;
+	}
+	
 
 }
 
