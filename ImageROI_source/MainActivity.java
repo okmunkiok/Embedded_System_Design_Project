@@ -37,8 +37,11 @@ public class MainActivity extends Activity
 	Bitmap bitmap_resized;
 	
 	
-	Bitmap bitmap2; //// processed image
-	Bitmap bitmap3; //// 2nd processed image
+	Bitmap bitmap2; //// for detecting and determining area
+	Bitmap bitmap3; //// for actual processing
+	
+	int height_index_of_number_area = 0;
+	int height_of_number_area = 0;
 	
 	@Override protected void onCreate(Bundle savedInstanceState) 
 	{ 
@@ -71,13 +74,7 @@ public class MainActivity extends Activity
 					Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
 					
 					// 이진화 호출입니다
-//					filter_width = 3;
-//					bitmap2 = gaussian_filtering(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, filter_width);
 					bitmap2 = gray_scaling(bitmap2, pixels_array, bitmap_sketch_book);
-					filter_width = 3;
-//					bitmap2 = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, filter_width);
-					filter_width = 5;
-//					bitmap2 = gaussian_filtering(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, filter_width);
 					bitmap2 = binarization(bitmap2, pixels_array, bitmap_sketch_book);
 					filter_width = 3;
 					bitmap2 = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, filter_width);
@@ -85,32 +82,8 @@ public class MainActivity extends Activity
 					bitmap2 = gaussian_filtering(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, filter_width);
 					bitmap2 = binarization(bitmap2, pixels_array, bitmap_sketch_book);
 					bitmap2 = detect_the_number_area(bitmap2, pixels_array, bitmap_sketch_book);
-//					bitmap2 = bitmap_binarized;
 					
-//					int pad_width = height / 10;
-//					bitmap2 = pad(bitmap_binarized, pixels_array, bitmap_sketch_book, pad_width);	// pad before image filtering
-					
-//					dilation_width = 3;
-////					dilation_width must be odd number
-//					bitmap2 = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, dilation_width);		
-						
-//					erosion_width = 3;
-//////					erosion_width must be odd number
-//					bitmap2 = erosion(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, erosion_width);
-//					
-//					int dilation_width = 17;
-////					dilation_width must be odd number
-//					bitmap_dilated = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, dilation_width);
-//					bitmap2 = bitmap_dilated;
-//					
-//					erosion_width = 17;
-////					erosion_width must be odd number
-//					bitmap_eroded = erosion(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, erosion_width);
-//					bitmap2 = bitmap_eroded;
-					
-//					int hit_or_miss_transform_width = 31;
-//					bitmap_hit_or_miss_transformed = hit_or_miss_transfrom(bitmap2, pixels_array, bitmap_sketch_book, hit_or_miss_transform_width);
-//					bitmap2 = bitmap_hit_or_miss_transformed;
+
 							
 					//// resize, 가로폭이 200 픽셀로 설정
 //					bitmap3 = resizeBitmap(bitmap2, 200);        
@@ -534,37 +507,58 @@ public class MainActivity extends Activity
 		
 	    int width = before_binarization_bitmap_image.getWidth();
 	    int height = before_binarization_bitmap_image.getHeight();
-//	    Bitmap gray_scaled_bitmap_image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
 	    
-//	    Toast.makeText(getApplicationContext(), Integer.toString(width), Toast.LENGTH_LONG).show();
-//	    Toast.makeText(getApplicationContext(), Integer.toString(height), Toast.LENGTH_LONG).show();
+	    int [] height_index_array_for_detect_longest_height = new int [width * width];
+	    int current_max_height_index = 0;
+	    int current_max_height = 0;
 	    
-//	    int [] pixels_array = new int [width * height];
+	    int temp_index = 0;
+	    int calculate_height = 0;
 	    
 	    before_binarization_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
 
 
-	    // color information
 	    int A, R, G, B;
 	    int index;
 	    int gray_scaled_rgb;
 	    
-	    for(int y = 0; y < height; y++){
+	    for(int y = 1; y < height; y++){
 	    	number_of_color_changed = 0;
 	    	for(int x = 0; x < width - 1; x ++){
 	    		index = y * width + x;
 	    		if(pixels_array[index] != pixels_array[index + 1])
 	    			number_of_color_changed += 1;
 	    		if(number_of_color_changed >= threshold_of_number_of_color_changed){
-	    			for(x = 0; x < width; x ++){
-			    		index = y * width + x;
-			    		pixels_array[index] = 0xffff0000;
-			    	}
+	    			height_index_array_for_detect_longest_height[y] = 1;
+	    			if(height_index_array_for_detect_longest_height[y - 1] == 0){
+	    				temp_index = y;
+	    				calculate_height = 0;
+	    			}
+	    			else{
+	    				calculate_height += 1;
+	    				if(calculate_height > current_max_height){
+	    					current_max_height_index = temp_index;
+	    					current_max_height = calculate_height;
+	    				}
+	    			}
+
 	    			break;
 	    		}
 	    	}
 	    	
 	    }
+	    
+	    
+////	    제대로 검출됐나 확인하려고 빨갛게 칠하는 테스트 코드
+//	    for(int y = current_max_height_index; y < current_max_height_index + current_max_height; y++){
+//	    	for(int x = 0; x < width - 1; x ++){
+//	    		index = y * width + x;
+//	    		for(x = 0; x < width; x ++){
+//		    		index = y * width + x;
+//		    		pixels_array[index] = 0xffff0000;
+//		    	}
+//	    	}
+//	    }
 	    
 
 	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
