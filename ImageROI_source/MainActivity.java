@@ -71,11 +71,20 @@ public class MainActivity extends Activity
 					Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
 					
 					// 이진화 호출입니다
+//					filter_width = 3;
+//					bitmap2 = gaussian_filtering(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, filter_width);
 					bitmap2 = gray_scaling(bitmap2, pixels_array, bitmap_sketch_book);
-					filter_width = 4;
+					filter_width = 3;
+//					bitmap2 = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, filter_width);
+					filter_width = 5;
+//					bitmap2 = gaussian_filtering(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, filter_width);
+					bitmap2 = binarization(bitmap2, pixels_array, bitmap_sketch_book);
+					filter_width = 3;
+					bitmap2 = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, filter_width);
+					filter_width = 3;
 					bitmap2 = gaussian_filtering(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, filter_width);
-					bitmap2 = binarization(bitmap2, pixels_array, bitmap_sketch_book);			//// 흑백 사진(grayscale)로 변경) + 이진화
-//					bitmap2 = detect_the_number_area(bitmap2, pixels_array, bitmap_sketch_book);
+					bitmap2 = binarization(bitmap2, pixels_array, bitmap_sketch_book);
+					bitmap2 = detect_the_number_area(bitmap2, pixels_array, bitmap_sketch_book);
 //					bitmap2 = bitmap_binarized;
 					
 //					int pad_width = height / 10;
@@ -520,7 +529,7 @@ public class MainActivity extends Activity
 	
 	public Bitmap detect_the_number_area(final Bitmap before_binarization_bitmap_image, int [] pixels_array, Bitmap bitmap_sketch_book){
 //		int threshold = 150 * 100;
-		int threshold_of_number_of_color_changed = 16;
+		int threshold_of_number_of_color_changed = 12;
 		int number_of_color_changed = 0;
 		
 	    int width = before_binarization_bitmap_image.getWidth();
@@ -573,8 +582,10 @@ public class MainActivity extends Activity
 		int height = before_dilation_bitmap_image.getHeight();
 		
 		int A, R, G, B;
-		int R_sum, G_sum, B_sum;
-//	    int gray_scaled_rgb;
+		float R_sum, G_sum, B_sum;
+		int R_sum_int, G_sum_int, B_sum_int;
+		int temp_pixel;
+	    int gray_scaled_rgb;
 	    
 		int index;
 		int index_reference;
@@ -584,7 +595,9 @@ public class MainActivity extends Activity
 		int is_dilation = 0;
 		
 		int filter_element_sum_for_remaking_sum_to_1 = 0;
-		int [] filter_matrix_array = new int [filter_width * filter_width];
+		float [] filter_matrix_array = new float [filter_width * filter_width];
+		
+		
 		for(int i = 0; i < filter_matrix_array.length / 2; i ++){
 			filter_matrix_array[i] = (i + 1);
 			filter_matrix_array[(filter_matrix_array.length - 1) - i] = (i + 1);
@@ -596,10 +609,18 @@ public class MainActivity extends Activity
 			filter_matrix_array[i] /= filter_element_sum_for_remaking_sum_to_1; 
 		
 		
+////		normal filter
+//		for(int i = 0; i < filter_matrix_array.length ; i++){
+//			filter_matrix_array[i] = (float) 1 / (filter_matrix_array.length);
+//		}
+		
+		
+		
 		for(int y = filter_width / 2; y < height - filter_width / 2; y++){
 			for(int x = filter_width / 2; x < width - filter_width / 2; x++){
 				square_point = y * width + x;
 				index_for_filter = 0;
+				gray_scaled_rgb = 0;
 				R_sum = 0;
 				G_sum = 0;
 				B_sum = 0;
@@ -609,18 +630,18 @@ public class MainActivity extends Activity
 					
 					for(int w = - (filter_width / 2); w <= filter_width / 2 ; w++){
 						index = index_reference + w;
-						pixels_array_for_process[square_point] += (pixels_array[index] * filter_matrix_array[index_for_filter]);
+//						pixels_array_for_process[square_point] += (pixels_array[index] * filter_matrix_array[index_for_filter]);
 						
 						
-						int temp_pixel = pixels_array[index];
+						temp_pixel = pixels_array[index];
 			    		R = (temp_pixel >> 16) & 0xff;
 			    		G = (temp_pixel >> 8) & 0xff;
 			    		B = (temp_pixel) & 0xff;
 			    		A = (temp_pixel >> 24) & 0xff;
 			    		
-//			    		R_sum += (R * filter_matrix_array[index_for_filter]);
-//			    		G_sum += (G * filter_matrix_array[index_for_filter]);
-//			    		B_sum += (B * filter_matrix_array[index_for_filter]);
+			    		R_sum += (R * filter_matrix_array[index_for_filter]);
+			    		G_sum += (G * filter_matrix_array[index_for_filter]);
+			    		B_sum += (B * filter_matrix_array[index_for_filter]);
 //			    		
 //			    		gray_scaled_rgb = ((R << 5) - (R << 1)) + ((G << 6) - (G << 2) - G) + ((B << 3) + (B << 1) + B);
 //			    		gray_scaled_rgb /= 100;
@@ -630,11 +651,17 @@ public class MainActivity extends Activity
 						index_for_filter += 1;
 					}
 				}
-				R_sum /= 100;
-				G_sum /= 100;
-				B_sum /= 100;
-				int gray_scaled_rgb = ((R_sum << 5) - (R_sum << 1)) + ((G_sum << 6) - (G_sum << 2) - G_sum) + ((B_sum << 3) + (B_sum << 1) + B_sum);
-				pixels_array_for_process[square_point] = 0xff000000 | (gray_scaled_rgb << 16) | (gray_scaled_rgb << 8) | (gray_scaled_rgb);
+//				R_sum /= 100;
+//				G_sum /= 100;
+//				B_sum /= 100;
+
+				R_sum_int = (int) R_sum;
+				G_sum_int = (int) G_sum;
+				B_sum_int = (int) B_sum;
+//				gray_scaled_rgb = ((R_sum_int << 5) - (R_sum_int << 1)) + ((G_sum_int << 6) - (G_sum_int << 2) - G_sum_int) + ((B_sum_int << 3) + (B_sum_int << 1) + B_sum_int);
+//				gray_scaled_rgb /= 100;
+				pixels_array_for_process[square_point] = 0xff000000 | (R_sum_int << 16) | (G_sum_int << 8) | (B_sum_int);
+//				pixels_array_for_process[square_point] = 0xff000000 | (gray_scaled_rgb << 16) | (gray_scaled_rgb << 8) | (gray_scaled_rgb);
 
 			}
 		}
