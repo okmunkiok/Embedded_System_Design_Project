@@ -25,10 +25,8 @@ public class MainActivity extends Activity
 	ImageView imageView1, imageView2; //// ImageView1은 원래 이미지를 보이고 ImageView2는 이미지의 이진화 결과를 보임 
 	Button button1, button2; 
 	Bitmap bitmap1; //// original image
-	Bitmap bitmap_binarized;
-	Bitmap bitmap_padded;
-	Bitmap bitmap_dilated;
-	Bitmap bitmap_eroded;
+	Bitmap bitmap_temp;
+	Bitmap bitmap_temp_2;
 	
 	int filter_width = 0;
 	
@@ -39,7 +37,7 @@ public class MainActivity extends Activity
 	
 	Bitmap bitmap2; //// for detecting and determining area
 	Bitmap bitmap3; //// 
-	Bitmap bitamp_for_actual_processing; // for actual processing	
+	Bitmap bitmap_for_actual_processing; // for actual processing	
 	
 	int height_index_of_number_area = 0;
 	int height_of_number_area = 0;
@@ -65,30 +63,34 @@ public class MainActivity extends Activity
 				}
 				else if (v==button2) {
 //					Toast.makeText(getApplicationContext(), "asdf", Toast.LENGTH_LONG).show();
-					bitmap2 = resize_samplesize(bitmap1, 4);
-					bitamp_for_actual_processing = bitmap1.copy(bitmap1.getConfig(), true);
-					bitamp_for_actual_processing = resize_samplesize(bitamp_for_actual_processing, 4);
-					int width = bitmap2.getWidth();
-			        int height = bitmap2.getHeight();
+					bitmap2 = resize_samplesize(bitmap1, 3);
+					bitmap_temp = resize_samplesize(bitmap1, 3);
 			        
-					int [] pixels_array = new int [width * height];
-					int [] pixels_array_for_process = new int [width * height];
 					
-					Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+					bitmap2 = gray_scaling(bitmap2);
+					bitmap2 = binarization(bitmap2);
+					filter_width = 3;
+					bitmap2 = dilation(bitmap2, filter_width);
+					filter_width = 3;
+					bitmap2 = gaussian_filtering(bitmap2, filter_width);
+					bitmap2 = binarization(bitmap2);
+					filter_width = 3;
+					bitmap2 = dilation(bitmap2, filter_width);
+					bitmap2 = detect_the_number_area(bitmap2);
+					bitmap2 = get_image_of_height_number_area(bitmap_temp);
 					
-					// 이진화 호출입니다
-					bitmap2 = gray_scaling(bitmap2, pixels_array, bitmap_sketch_book);
-					bitmap2 = binarization(bitmap2, pixels_array, bitmap_sketch_book);
-					filter_width = 3;
-					bitmap2 = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, filter_width);
-					filter_width = 3;
-					bitmap2 = gaussian_filtering(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, filter_width);
-					bitmap2 = binarization(bitmap2, pixels_array, bitmap_sketch_book);
-					filter_width = 3;
-					bitmap2 = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, filter_width);
-					bitmap2 = detect_the_number_area(bitmap2, pixels_array, bitmap_sketch_book);
-//					bitamp_for_actual_processing = get_image_of_height_number_area(bitamp_for_actual_processing, pixels_array, bitmap_sketch_book);
 
+					bitmap2 = gray_scaling(bitmap2);
+					bitmap2 = binarization(bitmap2);
+					filter_width = 3;
+					bitmap2 = gaussian_filtering(bitmap2, filter_width);
+					filter_width = 5;
+					bitmap2 = dilation(bitmap2, filter_width);
+//					filter_width = 3;
+//					bitmap2 = erosion(bitmap2, filter_width);
+					bitmap2 = binarization(bitmap2);
+					
+					
 
 							
 					//// resize, 가로폭이 200 픽셀로 설정
@@ -97,12 +99,18 @@ public class MainActivity extends Activity
 					//// resize, 비율이 1/8로 축소
 //					bitmap3 = resize_samplesize(bitmap1, 8);
 //					bitmap3 = resize_samplesize(bitmap2, 8);
+		
 					
 					imageView2.setImageBitmap(bitmap2); 	//// resize된 이진화된 이미지를 ImageView에 보임
+//					imageView2.setImageBitmap(bitmap_for_actual_processing);
 				
+					
+					
+					
+					
 					imageView2.setDrawingCacheEnabled(true);  //화면에 뿌릴때 캐시를 사용하게 한다
 
-//					bitmap3 = imageView2.getDrawingCache();   //캐시를 비트맵으로 변환
+					bitmap3 = imageView2.getDrawingCache();   //캐시를 비트맵으로 변환
 					
 					//// 이진화 이미지 SDcard에 저장
 					FileOutputStream outStream = null;
@@ -183,11 +191,14 @@ public class MainActivity extends Activity
 	}
 	
 
-	public Bitmap gray_scaling(final Bitmap before_binarization_bitmap_image, int [] pixels_array, Bitmap bitmap_sketch_book){
+	public Bitmap gray_scaling(final Bitmap before_binarization_bitmap_image){
 		int threshold = 150 * 100;
 		
 	    int width = before_binarization_bitmap_image.getWidth();
 	    int height = before_binarization_bitmap_image.getHeight();
+	    
+	    int [] pixels_array = new int [width * height];
+	    Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
 //	    Bitmap gray_scaled_bitmap_image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
 	    
 //	    Toast.makeText(getApplicationContext(), Integer.toString(width), Toast.LENGTH_LONG).show();
@@ -231,11 +242,14 @@ public class MainActivity extends Activity
 	//https://developer.android.com/reference/android/graphics/Bitmap.Config
 //		https://developer.android.com/reference/android/graphics/ColorMatrix
 //		https://developer.android.com/reference/android/graphics/ColorFilter
-	public Bitmap binarization(final Bitmap before_binarization_bitmap_image, int [] pixels_array, Bitmap bitmap_sketch_book){
+	public Bitmap binarization(final Bitmap before_binarization_bitmap_image){
 		int threshold = 150 * 100;
 		
 	    int width = before_binarization_bitmap_image.getWidth();
 	    int height = before_binarization_bitmap_image.getHeight();
+	    
+	    int [] pixels_array = new int [width * height];
+	    Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
 //	    Bitmap gray_scaled_bitmap_image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
 	    
 //	    Toast.makeText(getApplicationContext(), Integer.toString(width), Toast.LENGTH_LONG).show();
@@ -320,18 +334,26 @@ public class MainActivity extends Activity
 	}
 	
 	
-	public Bitmap dilation (final Bitmap before_dilation_bitmap_image, int[] pixels_array, int [] pixels_array_for_process, Bitmap bitmap_sketch_book, int dilation_width){
-		for(int i = pixels_array_for_process.length - 1; i >= 0 ; i--)
-			pixels_array_for_process[i] = 0xffffffff;
+	public Bitmap dilation (final Bitmap before_dilation_bitmap_image, int dilation_width){
+		
 		
 		int width = before_dilation_bitmap_image.getWidth();
 		int height = before_dilation_bitmap_image.getHeight();
+		
+		int [] pixels_array = new int [width * height];
+		int [] pixels_array_for_process = new int [width * height];
+		Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+		
+		for(int i = pixels_array_for_process.length - 1; i >= 0 ; i--)
+			pixels_array_for_process[i] = 0xffffffff;
 		
 		int [] dilation_matrix_array = new int [dilation_width * dilation_width];
 		int index;
 		int index_reference;
 		int square_point;
 		int is_dilation = 0;
+		
+		before_dilation_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
 		
 		for(index = dilation_matrix_array.length - 1; index >= 0; index--){
 			dilation_matrix_array[index] = 1;
@@ -372,12 +394,17 @@ public class MainActivity extends Activity
 		return bitmap_sketch_book;
 	}
 
-	public Bitmap erosion (final Bitmap before_erosion_bitmap_image, int[] pixels_array, int [] pixels_array_for_process, Bitmap bitmap_sketch_book, int erosion_width){
-		for(int i = pixels_array_for_process.length - 1; i >= 0 ; i--)
-			pixels_array_for_process[i] = 0xffffffff;
+	public Bitmap erosion (final Bitmap before_erosion_bitmap_image, int erosion_width){
+		
 		
 		int width = before_erosion_bitmap_image.getWidth();
 		int height = before_erosion_bitmap_image.getHeight();
+		
+		int [] pixels_array = new int [width * height];
+		int [] pixels_array_for_process = new int [width * height];
+		Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+		for(int i = pixels_array_for_process.length - 1; i >= 0 ; i--)
+			pixels_array_for_process[i] = 0xffffffff;
 		
 		int [] erosion_matrix_array = new int [erosion_width * erosion_width];
 		int index;
@@ -386,6 +413,8 @@ public class MainActivity extends Activity
 		int is_erosion = 0;
 		int erosion_width_square = erosion_width * erosion_width;
 		int escape_for_double_for = 0;
+		
+		before_erosion_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
 		
 		for(index = erosion_matrix_array.length - 1; index >= 0; index--){
 			erosion_matrix_array[index] = 1;
@@ -435,7 +464,7 @@ public class MainActivity extends Activity
 		int height = before_hit_or_miss_transform_bitmap_image.getHeight();
 		
 		int [] pixels_array_for_erosion = new int [width * height];
-		Bitmap bitmap_for_temp_erosion = erosion(before_hit_or_miss_transform_bitmap_image, pixels_array, pixels_array_for_erosion, bitmap_sketch_book, hit_or_miss_transform_width);
+		Bitmap bitmap_for_temp_erosion = erosion(before_hit_or_miss_transform_bitmap_image, hit_or_miss_transform_width);
 		bitmap_for_temp_erosion.getPixels(pixels_array_for_erosion, 0, width, 0, 0, width, height);
 //		for(int i = pixels_array_for_erosion.length - 1; i >= 0; i--)
 //			pixels_array_for_erosion[i] = 0xffffff;
@@ -506,13 +535,18 @@ public class MainActivity extends Activity
 	
 	
 	
-	public Bitmap detect_the_number_area(final Bitmap before_binarization_bitmap_image, int [] pixels_array, Bitmap bitmap_sketch_book){
+	public Bitmap detect_the_number_area(final Bitmap before_binarization_bitmap_image){
 //		int threshold = 150 * 100;
 		int threshold_of_number_of_color_changed = 12;
 		int number_of_color_changed = 0;
 		
 	    int width = before_binarization_bitmap_image.getWidth();
 	    int height = before_binarization_bitmap_image.getHeight();
+	    Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+	    
+	    int [] pixels_array = new int [width * height];
+	    
+	    before_binarization_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
 	    
 	    int [] height_index_array_for_detect_longest_height = new int [width * width];
 	    int current_max_height_index = 0;
@@ -556,15 +590,15 @@ public class MainActivity extends Activity
 	    
 	    
 ////	    제대로 검출됐나 확인하려고 빨갛게 칠하는 테스트 코드
-	    for(int y = current_max_height_index; y < current_max_height_index + current_max_height; y++){
-	    	for(int x = 0; x < width - 1; x ++){
-	    		index = y * width + x;
-	    		for(x = 0; x < width; x ++){
-		    		index = y * width + x;
-		    		pixels_array[index] = 0xffff0000;
-		    	}
-	    	}
-	    }
+//	    for(int y = current_max_height_index; y < current_max_height_index + current_max_height; y++){
+//	    	for(int x = 0; x < width - 1; x ++){
+//	    		index = y * width + x;
+//	    		for(x = 0; x < width; x ++){
+//		    		index = y * width + x;
+//		    		pixels_array[index] = 0xffff0000;
+//		    	}
+//	    	}
+//	    }
 	    
 	    
 	    height_index_of_number_area = current_max_height_index;
@@ -578,12 +612,17 @@ public class MainActivity extends Activity
 	
 	
 	
-	public Bitmap gaussian_filtering (final Bitmap before_dilation_bitmap_image, int[] pixels_array, int [] pixels_array_for_process, Bitmap bitmap_sketch_book, int filter_width){
-		for(int i = pixels_array_for_process.length - 1; i >= 0 ; i--)
-			pixels_array_for_process[i] = 0xffffffff;
+	public Bitmap gaussian_filtering (final Bitmap before_dilation_bitmap_image, int filter_width){
+		
 		
 		int width = before_dilation_bitmap_image.getWidth();
 		int height = before_dilation_bitmap_image.getHeight();
+		
+		int [] pixels_array = new int [width * height];
+		int [] pixels_array_for_process = new int [width * height];
+		Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+		for(int i = pixels_array_for_process.length - 1; i >= 0 ; i--)
+			pixels_array_for_process[i] = 0xffffffff;
 		
 		int A, R, G, B;
 		float R_sum, G_sum, B_sum;
@@ -600,6 +639,8 @@ public class MainActivity extends Activity
 		
 		int filter_element_sum_for_remaking_sum_to_1 = 0;
 		float [] filter_matrix_array = new float [filter_width * filter_width];
+		
+		before_dilation_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
 		
 		
 		for(int i = 0; i < filter_matrix_array.length / 2; i ++){
@@ -679,22 +720,105 @@ public class MainActivity extends Activity
 		return bitmap_sketch_book;
 	}
 	
-	public Bitmap get_image_of_height_number_area(final Bitmap before_binarization_bitmap_image, int [] pixels_array, Bitmap bitmap_sketch_book){
+	public Bitmap get_image_of_height_number_area(final Bitmap image_which_will_be_cropped){
+		
+	    int width = image_which_will_be_cropped.getWidth();
+	    int height = image_which_will_be_cropped.getHeight();
+	    
+	    
+//	    int height_area = height_of_number_area;
+//	    int offset = (height_index_of_number_area - 1) * width;
+	    
+//	    image_which_will_be_cropped.getPixels(pixels_array, offset, width, 0, 0, width, height_area);
+	    
+	    Bitmap image_of_height_number_area = Bitmap.createBitmap(image_which_will_be_cropped
+	    		, 0
+	    		, height_index_of_number_area
+	    		, width
+	    		, height_of_number_area);
+	    
+	    		
+	    return image_of_height_number_area;
+
+
+//	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
+	    
+//	    return bitmap_sketch_book;
+	}
+	
+
+	
+	public Bitmap find_pseudo_center(final Bitmap before_binarization_bitmap_image){
 		
 	    int width = before_binarization_bitmap_image.getWidth();
 	    int height = before_binarization_bitmap_image.getHeight();
-	    int height_area = height_of_number_area;
-	    int offset = (height_index_of_number_area - 1) * width;
 	    
-	    before_binarization_bitmap_image.getPixels(pixels_array, offset, width, 0, 0, width, height_area);
-
-
-
+	    int [] pixels_array = new int [width * height];
+	    Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+	    
+	    int y = height / 2;
+	    int index = 0;
+	    for(int x = width / 2; x >= 0; x--){
+    		index = y * width + x;
+    		int temp_pixel = pixels_array[index];
+    		
+    		if(temp_pixel == 0xff000000){
+    			
+    		}
+    		else
+    			continue;
+    	}
+	    
 	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
 	    
 	    return bitmap_sketch_book;
 	}
 	
+	
+	public Bitmap find_letter(final Bitmap before_binarization_bitmap_image){
+		int threshold = 150 * 100;
+		
+	    int width = before_binarization_bitmap_image.getWidth();
+	    int height = before_binarization_bitmap_image.getHeight();
+	    
+	    int [] pixels_array = new int [width * height];
+	    Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+//	    Bitmap gray_scaled_bitmap_image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+	    
+//	    Toast.makeText(getApplicationContext(), Integer.toString(width), Toast.LENGTH_LONG).show();
+//	    Toast.makeText(getApplicationContext(), Integer.toString(height), Toast.LENGTH_LONG).show();
+	    
+//	    int [] pixels_array = new int [width * height];
+	    
+	    before_binarization_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
 
+
+	    // color information
+	    int A, R, G, B;
+	    int index;
+	    int gray_scaled_rgb;
+	    
+	    for(int y = height - 1; y >= 0; y--){
+	    	for(int x = width - 1; x >= 0; x--){
+	    		index = y * width + x;
+	    		int temp_pixel = pixels_array[index];
+	    		R = (temp_pixel >> 16) & 0xff;
+	    		G = (temp_pixel >> 8) & 0xff;
+	    		B = (temp_pixel) & 0xff;
+	    		A = (temp_pixel >> 24) & 0xff;
+	    		
+	    		gray_scaled_rgb = ((R << 5) - (R << 1)) + ((G << 6) - (G << 2) - G) + ((B << 3) + (B << 1) + B);
+	    		
+	    		if(gray_scaled_rgb > threshold)
+	    			pixels_array[index] = 0xffffffff;
+	    		else
+	    			pixels_array[index] = 0xff000000;
+	    	}
+	    }
+	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
+	    
+	    return bitmap_sketch_book;
+	}
+	
 }
 
