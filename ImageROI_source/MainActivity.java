@@ -38,7 +38,8 @@ public class MainActivity extends Activity
 	
 	
 	Bitmap bitmap2; //// for detecting and determining area
-	Bitmap bitmap3; //// for actual processing
+	Bitmap bitmap3; //// 
+	Bitmap bitamp_for_actual_processing; // for actual processing	
 	
 	int height_index_of_number_area = 0;
 	int height_of_number_area = 0;
@@ -64,7 +65,9 @@ public class MainActivity extends Activity
 				}
 				else if (v==button2) {
 //					Toast.makeText(getApplicationContext(), "asdf", Toast.LENGTH_LONG).show();
-					bitmap2 = resize_samplesize(bitmap1, 8);
+					bitmap2 = resize_samplesize(bitmap1, 4);
+					bitamp_for_actual_processing = bitmap1.copy(bitmap1.getConfig(), true);
+					bitamp_for_actual_processing = resize_samplesize(bitamp_for_actual_processing, 4);
 					int width = bitmap2.getWidth();
 			        int height = bitmap2.getHeight();
 			        
@@ -81,8 +84,11 @@ public class MainActivity extends Activity
 					filter_width = 3;
 					bitmap2 = gaussian_filtering(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, filter_width);
 					bitmap2 = binarization(bitmap2, pixels_array, bitmap_sketch_book);
+					filter_width = 3;
+					bitmap2 = dilation(bitmap2, pixels_array, pixels_array_for_process, bitmap_sketch_book, filter_width);
 					bitmap2 = detect_the_number_area(bitmap2, pixels_array, bitmap_sketch_book);
-					
+//					bitamp_for_actual_processing = get_image_of_height_number_area(bitamp_for_actual_processing, pixels_array, bitmap_sketch_book);
+
 
 							
 					//// resize, 가로폭이 200 픽셀로 설정
@@ -96,7 +102,7 @@ public class MainActivity extends Activity
 				
 					imageView2.setDrawingCacheEnabled(true);  //화면에 뿌릴때 캐시를 사용하게 한다
 
-					bitmap3 = imageView2.getDrawingCache();   //캐시를 비트맵으로 변환
+//					bitmap3 = imageView2.getDrawingCache();   //캐시를 비트맵으로 변환
 					
 					//// 이진화 이미지 SDcard에 저장
 					FileOutputStream outStream = null;
@@ -550,15 +556,19 @@ public class MainActivity extends Activity
 	    
 	    
 ////	    제대로 검출됐나 확인하려고 빨갛게 칠하는 테스트 코드
-//	    for(int y = current_max_height_index; y < current_max_height_index + current_max_height; y++){
-//	    	for(int x = 0; x < width - 1; x ++){
-//	    		index = y * width + x;
-//	    		for(x = 0; x < width; x ++){
-//		    		index = y * width + x;
-//		    		pixels_array[index] = 0xffff0000;
-//		    	}
-//	    	}
-//	    }
+	    for(int y = current_max_height_index; y < current_max_height_index + current_max_height; y++){
+	    	for(int x = 0; x < width - 1; x ++){
+	    		index = y * width + x;
+	    		for(x = 0; x < width; x ++){
+		    		index = y * width + x;
+		    		pixels_array[index] = 0xffff0000;
+		    	}
+	    	}
+	    }
+	    
+	    
+	    height_index_of_number_area = current_max_height_index;
+		height_of_number_area = current_max_height;
 	    
 
 	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
@@ -667,6 +677,22 @@ public class MainActivity extends Activity
 		bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
 		
 		return bitmap_sketch_book;
+	}
+	
+	public Bitmap get_image_of_height_number_area(final Bitmap before_binarization_bitmap_image, int [] pixels_array, Bitmap bitmap_sketch_book){
+		
+	    int width = before_binarization_bitmap_image.getWidth();
+	    int height = before_binarization_bitmap_image.getHeight();
+	    int height_area = height_of_number_area;
+	    int offset = (height_index_of_number_area - 1) * width;
+	    
+	    before_binarization_bitmap_image.getPixels(pixels_array, offset, width, 0, 0, width, height_area);
+
+
+
+	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
+	    
+	    return bitmap_sketch_book;
 	}
 	
 
