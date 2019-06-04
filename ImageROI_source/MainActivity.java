@@ -81,20 +81,38 @@ public class MainActivity extends Activity
 					filter_width = 3;
 					bitmap2 = dilation(bitmap2, filter_width);
 					bitmap2 = detect_the_number_area(bitmap2);
+//					Toast.makeText(getApplicationContext(), "width before get area = " + Integer.toString(bitmap2.getWidth()), Toast.LENGTH_LONG).show();
+//				    Toast.makeText(getApplicationContext(), "height before get area = " + Integer.toString(bitmap2.getHeight()), Toast.LENGTH_LONG).show();
+					bitmap_temp = gray_scaling(bitmap_temp);
+					bitmap_temp = binarization(bitmap_temp);
+					filter_width = 3;
+					bitmap_temp = gaussian_filtering(bitmap_temp, filter_width);
+					bitmap_temp = binarization(bitmap_temp);
+					filter_width = 3;
+					bitmap_temp = dilation(bitmap_temp, filter_width);
+					filter_width = 3;
+					bitmap_temp = erosion(bitmap_temp, filter_width);
+//					filter_width = 3;
+//					bitmap_temp = gaussian_filtering(bitmap_temp, filter_width);
+//					bitmap_temp = binarization(bitmap_temp);
 					bitmap2 = get_image_of_height_number_area(bitmap_temp);
+//					Toast.makeText(getApplicationContext(), "width after get area = " + Integer.toString(bitmap2.getWidth()), Toast.LENGTH_LONG).show();
+//				    Toast.makeText(getApplicationContext(), "height before get area = " + Integer.toString(bitmap2.getHeight()), Toast.LENGTH_LONG).show();
 					
 
-					bitmap2 = gray_scaling(bitmap2);
-					bitmap2 = binarization(bitmap2);
-					filter_width = 3;
-					bitmap2 = gaussian_filtering(bitmap2, filter_width);
-					filter_width = 5;
-					bitmap2 = dilation(bitmap2, filter_width);
+//					bitmap2 = gray_scaling(bitmap2);
+//					bitmap2 = binarization(bitmap2);
 //					filter_width = 3;
-//					bitmap2 = erosion(bitmap2, filter_width);
-					bitmap2 = binarization(bitmap2);
+//					bitmap2 = gaussian_filtering(bitmap2, filter_width);
+////					filter_width = 5;
+////					bitmap2 = dilation(bitmap2, filter_width);
+////					filter_width = 3;
+////					bitmap2 = erosion(bitmap2, filter_width);
+//					bitmap2 = binarization(bitmap2);
 					bitmap2 = find_center_to_left(bitmap2);
 //					bitmap2 = find_center_to_right(bitmap2);
+//					bitmap_temp = get_a_letter(bitmap2);
+					bitmap2 = get_a_letter(bitmap2);
 					
 					
 
@@ -107,7 +125,8 @@ public class MainActivity extends Activity
 //					bitmap3 = resize_samplesize(bitmap2, 8);
 		
 					
-					imageView2.setImageBitmap(bitmap2); 	//// resize된 이진화된 이미지를 ImageView에 보임
+//					imageView2.setImageBitmap(bitmap2); 	//// resize된 이진화된 이미지를 ImageView에 보임
+					imageView2.setImageBitmap(bitmap2);
 //					imageView2.setImageBitmap(bitmap_for_actual_processing);
 				
 					
@@ -170,23 +189,6 @@ public class MainActivity extends Activity
 	} 
 	
 	
-//	private 
-	
-	
-
-	//// 이미지 resize with 가로폭 픽셀, 출처: https://dwfox.tistory.com/37  
-//	private Bitmap resizeBitmap(Bitmap original, int resizeWidth) {
-//		 
-//	    ////int resizeWidth = 200;
-//	 
-//	    double aspectRatio = (double) original.getHeight() / (double) original.getWidth();
-//	    int targetHeight = (int) (resizeWidth * aspectRatio);
-//	    Bitmap result = Bitmap.createScaledBitmap(original, resizeWidth, targetHeight, false);
-//	    if (result != original) {
-//	        original.recycle();
-//	    }
-//	    return result;
-//	}
 	
 	//// 이미지 resize by ratio, 출처: https://it77.tistory.com/99
 	private Bitmap resize_samplesize (Bitmap original, int samplesize) {
@@ -241,13 +243,6 @@ public class MainActivity extends Activity
 	}
 	
 	
-	//여기는 이진화 작업 (gray-scaling + binarization) 구역입니다
-	//gray-scaling
-	//참고
-	//https://developer.android.com/reference/android/graphics/Bitmap
-	//https://developer.android.com/reference/android/graphics/Bitmap.Config
-//		https://developer.android.com/reference/android/graphics/ColorMatrix
-//		https://developer.android.com/reference/android/graphics/ColorFilter
 	public Bitmap binarization(final Bitmap before_binarization_bitmap_image){
 		int threshold = 150 * 100;
 		
@@ -293,14 +288,7 @@ public class MainActivity extends Activity
 	    return bitmap_sketch_book;
 	}
 	
-	
-	
-	
-	
-
-	
-//	여기서부터 pad 구역입니다
-	
+		
 	public Bitmap pad (final Bitmap before_padding_bitmap_image, int[] pixels_array, Bitmap bitmap_sketch_book, int pad_width){
 		int width = before_padding_bitmap_image.getWidth();
 		int height = before_padding_bitmap_image.getHeight();
@@ -743,7 +731,7 @@ public class MainActivity extends Activity
 	    		, width
 	    		, height_of_number_area);
 	    
-	    		
+	    
 	    return image_of_height_number_area;
 
 
@@ -762,6 +750,12 @@ public class MainActivity extends Activity
 	    int [] pixels_array = new int [width * height];
 	    Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
 	    before_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
+	    
+	    x_min = 99999999;
+		y_min = 99999999;
+		x_max = 0;
+		y_max = 0;
+	    
 	    
 	    int y = height * 2 / 3;
 	    int index = 0;
@@ -792,6 +786,12 @@ public class MainActivity extends Activity
 	    int [] pixels_array = new int [width * height];
 	    Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
 	    before_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
+	    
+	    x_min = 99999999;
+		y_min = 99999999;
+		x_max = 0;
+		y_max = 0;
+	    
 	    
 	    int y = height * 2 / 3;
 	    int index = 0;
@@ -862,7 +862,7 @@ public class MainActivity extends Activity
 			if(y < y_min)
 				y_min = y;
 		
-			find_letter(pixels_array, width, height, index, x, y + 1);
+			find_letter(pixels_array, width, height, index, x, y - 1);
 		}
 		
 //		왼쪽 위 픽셀 탐색
@@ -951,7 +951,11 @@ public class MainActivity extends Activity
 		int width_of_image_which_would_be_extracted = image_which_will_be_re_created.getWidth();
 		int height_of_image_which_would_be_extracted = image_which_will_be_re_created.getHeight();
 		int index_for_extract = 0;
-		int [] pi
+		int [] original_pixels_array = new int [width_of_image_which_would_be_extracted * height_of_image_which_would_be_extracted];
+		image_which_will_be_re_created.getPixels(original_pixels_array, 0, width_of_image_which_would_be_extracted, 0, 0, width_of_image_which_would_be_extracted, height_of_image_which_would_be_extracted);
+		
+//		y_min -= height_index_of_number_area;
+//		y_max -= height_index_of_number_area;
 		
 	    int width = x_max - x_min + 1;
 	    int height = y_max - y_min + 1;
@@ -960,31 +964,63 @@ public class MainActivity extends Activity
 	    int index = 0;
 	    int [] pixels_array = new int [width * height];  
 	    
-	    for(y = 0; y <= height; y++){
-	    	for(x = 0; x <= width; x++){
-	    		index = width * y + x;
-	    		index_for_extract = width_of_image_which_would_be_extracted * (y_min + y) + (x_min + x);
-	    		pixels_array[index] = 
-	    	}
-	    }
-//	    int height_area = height_of_number_area;
-//	    int offset = (height_index_of_number_area - 1) * width;
+//	    Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+	    Bitmap bitmap_sketch_book = Bitmap.createBitmap(width_of_image_which_would_be_extracted, height_of_image_which_would_be_extracted, Bitmap.Config.ARGB_4444);
 	    
-//	    image_which_will_be_cropped.getPixels(pixels_array, offset, width, 0, 0, width, height_area);
+//	    for(y = 0; y < height; y++){
+//	    	for(x = 0; x < width; x++){
+//	    		index = width * y + x;
+//	    		index_for_extract = width_of_image_which_would_be_extracted * (y_min + y) + (x_min + x);
+////	    		pixels_array[index] = original_pixels_array[index_for_extract];
+//	    		pixels_array[index] = 0xff00ff00;
+////	    		original_pixels_array[index_for_extract] = 0xff00ff00;
+//	    	}
+//	    }
 	    
-	    Bitmap image_of_height_number_area = Bitmap.createBitmap(image_which_will_be_cropped
-	    		, 0
-	    		, height_index_of_number_area
-	    		, width
-	    		, height_of_number_area);
-	    
-	    		
-	    return image_of_height_number_area;
-
-
 //	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
+//	    bitmap_sketch_book.getPixels(original_pixels_array, 0, width_of_image_which_would_be_extracted, 0, 0, width_of_image_which_would_be_extracted, height_of_image_which_would_be_extracted);
 	    
-//	    return bitmap_sketch_book;
+//	    Toast.makeText(getApplicationContext(), Integer.toString(width_of_image_which_would_be_extracted), Toast.LENGTH_LONG).show();
+//	    Toast.makeText(getApplicationContext(), Integer.toString(height_of_image_which_would_be_extracted), Toast.LENGTH_LONG).show();
+//	    Toast.makeText(getApplicationContext(), "x_min = " + Integer.toString(x_min), Toast.LENGTH_LONG).show();
+//	    Toast.makeText(getApplicationContext(), "x_max = " + Integer.toString(x_max), Toast.LENGTH_LONG).show();
+//	    Toast.makeText(getApplicationContext(), "y_min = " + Integer.toString(y_min), Toast.LENGTH_LONG).show();
+//	    Toast.makeText(getApplicationContext(), "y_max = " + Integer.toString(y_max), Toast.LENGTH_LONG).show();
+	    
+//	    for(y = 0; y < height_of_image_which_would_be_extracted - 1; y++){
+//	    	x = x_min;
+//	    	index = width_of_image_which_would_be_extracted * y + x;
+//	    	original_pixels_array[index] = 0xff00ff00;
+//	    	
+//	    	x = x_max;
+//	    	index = width_of_image_which_would_be_extracted * y + x;
+//	    	original_pixels_array[index] = 0xff00ff00;
+//	    }
+	    
+	    for(x = x_min; x < x_max; x++){
+	    	y = y_min;
+	    	index = width_of_image_which_would_be_extracted * y + x;
+	    	original_pixels_array[index] = 0xff0000ff;
+	    	
+	    	y = y_max;
+	    	index = width_of_image_which_would_be_extracted * y + x;
+	    	original_pixels_array[index] = 0xff0000ff;
+	    }
+	    for(y = y_min; y < y_max; y++){
+	    		x = x_min;
+	    		index = width_of_image_which_would_be_extracted * y + x;
+	    		original_pixels_array[index] = 0xff0000ff;
+	    		
+	    		x = x_max;
+	    		index = width_of_image_which_would_be_extracted * y + x;
+	    		original_pixels_array[index] = 0xff0000ff;
+	    }
+	    
+	    bitmap_sketch_book.setPixels(original_pixels_array, 0, width_of_image_which_would_be_extracted, 0, 0, width_of_image_which_would_be_extracted, height_of_image_which_would_be_extracted);
+	    		
+	    return bitmap_sketch_book;
+
+	    
 	}
 }
 
