@@ -139,12 +139,12 @@ public class MainActivity extends Activity
 					imageView2.setImageBitmap(each_character_bitmap_array[0]);
 					imageView2.setImageBitmap(each_character_bitmap_array[1]);
 					imageView2.setImageBitmap(each_character_bitmap_array[2]);
-					imageView2.setImageBitmap(each_character_bitmap_array[3]);
-					imageView2.setImageBitmap(each_character_bitmap_array[4]);
-					imageView2.setImageBitmap(each_character_bitmap_array[5]);
-					imageView2.setImageBitmap(each_character_bitmap_array[6]);
-					imageView2.setImageBitmap(each_character_bitmap_array[7]);
-					imageView2.setImageBitmap(each_character_bitmap_array[8]);
+//					imageView2.setImageBitmap(each_character_bitmap_array[3]);
+//					imageView2.setImageBitmap(each_character_bitmap_array[4]);
+//					imageView2.setImageBitmap(each_character_bitmap_array[5]);
+//					imageView2.setImageBitmap(each_character_bitmap_array[6]);
+//					imageView2.setImageBitmap(each_character_bitmap_array[7]);
+//					imageView2.setImageBitmap(each_character_bitmap_array[8]);
 					
 //					imageView2.setImageBitmap(bitmap_for_actual_processing);
 				
