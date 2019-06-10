@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,18 +19,18 @@ import android.widget.Toast;
 //	import to handle bmp by Matrix
 //	import to handle Arrays
 //	mainly for checking Arrays' data right
-import android.os.Handler;
 //테스트할 때 딜레이 주기 위해
 
 
 public class MainActivity extends Activity 
 { 
 	ImageView imageView1, imageView2; //// ImageView1은 원래 이미지를 보이고 ImageView2는 이미지의 이진화 결과를 보임 
+	ImageView [] imageView_each_letters = new ImageView [12];
 	Button button1, button2; 
 	Bitmap bitmap1; //// original image
 	Bitmap bitmap_temp;
 	Bitmap bitmap_temp_2;
-	Bitmap [] each_character_bitmap_array = new Bitmap [300];
+	Bitmap [] each_character_bitmap_array = new Bitmap [20];
 	int each_character_bitmap_array_index = 0;
 	
 	int filter_width = 0;
@@ -58,6 +59,18 @@ public class MainActivity extends Activity
 		setContentView(R.layout.activity_main); 
 		imageView1 = (ImageView)findViewById(R.id.image1); 
 		imageView2 = (ImageView)findViewById(R.id.image2);
+		imageView_each_letters[0] = (ImageView) findViewById (R.id.ImageView01);
+		imageView_each_letters[1] = (ImageView) findViewById (R.id.ImageView02);
+		imageView_each_letters[2] = (ImageView) findViewById (R.id.ImageView03);
+		imageView_each_letters[3] = (ImageView) findViewById (R.id.ImageView04);
+		imageView_each_letters[4] = (ImageView) findViewById (R.id.ImageView05);
+		imageView_each_letters[5] = (ImageView) findViewById (R.id.ImageView06);
+		imageView_each_letters[6] = (ImageView) findViewById (R.id.ImageView07);
+		imageView_each_letters[7] = (ImageView) findViewById (R.id.ImageView08);
+		imageView_each_letters[8] = (ImageView) findViewById (R.id.ImageView09);
+		imageView_each_letters[9] = (ImageView) findViewById (R.id.ImageView10);
+		imageView_each_letters[10] = (ImageView) findViewById (R.id.ImageView11);
+		imageView_each_letters[11] = (ImageView) findViewById (R.id.ImageView12);
 		button1 = (Button)findViewById(R.id.button1); 
 		button2 = (Button)findViewById(R.id.button2);
 		
@@ -89,37 +102,42 @@ public class MainActivity extends Activity
 					bitmap2 = detect_the_number_area(bitmap2);
 //					Toast.makeText(getApplicationContext(), "width before get area = " + Integer.toString(bitmap2.getWidth()), Toast.LENGTH_LONG).show();
 //				    Toast.makeText(getApplicationContext(), "height before get area = " + Integer.toString(bitmap2.getHeight()), Toast.LENGTH_LONG).show();
+//					bitmap_temp = get_image_of_height_number_area(bitmap_temp);
 					bitmap_temp = gray_scaling(bitmap_temp);
 					bitmap_temp = binarization(bitmap_temp);
-					filter_width = 3;
+					filter_width = 7;
 					bitmap_temp = gaussian_filtering(bitmap_temp, filter_width);
 					bitmap_temp = binarization(bitmap_temp);
-					filter_width = 3;
-					bitmap_temp = dilation(bitmap_temp, filter_width);
-					filter_width = 3;
-					bitmap_temp = erosion(bitmap_temp, filter_width);
+//					filter_width = 3;
+//					bitmap_temp = dilation(bitmap_temp, filter_width);
+					
+					bitmap_temp = get_image_of_height_number_area(bitmap_temp);
+					bitmap_temp = get_rid_of_border_whose_width_is_1_pixel(bitmap_temp);
+//					filter_width = 3;
+//					bitmap_temp = erosion(bitmap_temp, filter_width);
 //					filter_width = 3;
 //					bitmap_temp = gaussian_filtering(bitmap_temp, filter_width);
 //					bitmap_temp = binarization(bitmap_temp);
-					bitmap2 = get_image_of_height_number_area(bitmap_temp);
+//					bitmap_temp = RotateBitmap(bitmap_temp, 1);
+//					bitmap2 = get_image_of_height_number_area(bitmap_temp);
 //					Toast.makeText(getApplicationContext(), "width after get area = " + Integer.toString(bitmap2.getWidth()), Toast.LENGTH_LONG).show();
 //				    Toast.makeText(getApplicationContext(), "height before get area = " + Integer.toString(bitmap2.getHeight()), Toast.LENGTH_LONG).show();
 					
 
-//					bitmap2 = gray_scaling(bitmap2);
+////					bitmap2 = gray_scaling(bitmap2);
+////					bitmap2 = binarization(bitmap2);
+//					filter_width = 3;
+//					bitmap2 = gaussian_filtering(bitmap2, filter_width);
+//////					filter_width = 5;
+//////					bitmap2 = dilation(bitmap2, filter_width);
+//////					filter_width = 3;
+////					bitmap2 = erosion(bitmap2, filter_width);
 //					bitmap2 = binarization(bitmap2);
-					filter_width = 3;
-					bitmap2 = gaussian_filtering(bitmap2, filter_width);
-////					filter_width = 5;
-////					bitmap2 = dilation(bitmap2, filter_width);
-////					filter_width = 3;
-//					bitmap2 = erosion(bitmap2, filter_width);
-					bitmap2 = binarization(bitmap2);
-//					bitmap2 = find_center_to_left(bitmap2);
-					find_from_left_to_right(bitmap2);
-//					bitmap2 = find_center_to_right(bitmap2);
-//					bitmap_temp = get_a_letter(bitmap2);
-//					bitmap2 = get_a_letter(bitmap2);
+////					bitmap2 = find_center_to_left(bitmap2);
+					find_from_left_to_right(bitmap_temp);
+////					bitmap2 = find_center_to_right(bitmap2);
+////					bitmap_temp = get_a_letter(bitmap2);
+////					bitmap2 = get_a_letter(bitmap2);
 					
 					
 
@@ -133,18 +151,21 @@ public class MainActivity extends Activity
 		
 					
 //					imageView2.setImageBitmap(bitmap2); 	//// resize된 이진화된 이미지를 ImageView에 보임
-//					imageView2.setImageBitmap(bitmap2);
-//					imageView2.setImageBitmap(bitmap_temp);
+//					imageView2.setImageBitmap(bitmap);
+					imageView2.setImageBitmap(bitmap_temp);
 					
-					imageView2.setImageBitmap(each_character_bitmap_array[0]);
-					imageView2.setImageBitmap(each_character_bitmap_array[1]);
-					imageView2.setImageBitmap(each_character_bitmap_array[2]);
-//					imageView2.setImageBitmap(each_character_bitmap_array[3]);
-//					imageView2.setImageBitmap(each_character_bitmap_array[4]);
-//					imageView2.setImageBitmap(each_character_bitmap_array[5]);
-//					imageView2.setImageBitmap(each_character_bitmap_array[6]);
-//					imageView2.setImageBitmap(each_character_bitmap_array[7]);
-//					imageView2.setImageBitmap(each_character_bitmap_array[8]);
+					for(int i = 0; i < 12; i ++)
+						imageView_each_letters[i].setImageBitmap(each_character_bitmap_array[i]);
+//					imageView_each_letters[0].setImageBitmap(each_character_bitmap_array[0]);
+//					imageView2.setImageBitmap(each_character_bitmap_array[0]);
+//					imageView2.setImageBitmap(each_character_bitmap_array[1]);
+//					imageView2.setImageBitmap(each_character_bitmap_array[2]);
+////					imageView2.setImageBitmap(each_character_bitmap_array[3]);
+////					imageView2.setImageBitmap(each_character_bitmap_array[4]);
+////					imageView2.setImageBitmap(each_character_bitmap_array[5]);
+////					imageView2.setImageBitmap(each_character_bitmap_array[6]);
+////					imageView2.setImageBitmap(each_character_bitmap_array[7]);
+////					imageView2.setImageBitmap(each_character_bitmap_array[8]);
 					
 //					imageView2.setImageBitmap(bitmap_for_actual_processing);
 				
@@ -1065,6 +1086,55 @@ public class MainActivity extends Activity
 	    return bitmap_sketch_book;
 
 	    
+	}
+	
+	
+	
+	public static Bitmap RotateBitmap(Bitmap source, float angle)
+	{
+	      Matrix matrix = new Matrix();
+	      matrix.postRotate(angle);
+	      return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+	}
+	
+	public Bitmap get_rid_of_border_whose_width_is_1_pixel(final Bitmap before_bitmap_image){
+		int threshold = 150 * 100;
+		
+	    int width = before_bitmap_image.getWidth();
+	    int height = before_bitmap_image.getHeight();
+	    
+	    int [] pixels_array = new int [width * height];
+	    Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+	    before_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
+	    
+	    int x = 0;
+	    int y = 0;
+	    int index = 0;
+	    
+	    y = 0;
+	    for(x = 0; x < width; x++){
+	    	index = y * width + x;
+	    	pixels_array[index] = 0xffff0000;
+	    }
+	    y = height - 1;
+	    for(x = 0; x < width; x++){
+	    	index = y * width + x;
+	    	pixels_array[index] = 0xffff0000;
+	    }
+	    x = 0;
+	    for(y = 0; y < height; y++){
+	    	index = y * width + x;
+	    	pixels_array[index] = 0xffff0000;
+	    }
+	    x = width - 1;
+	    for(y = 0; y < height; y++){
+	    	index = y * width + x;
+	    	pixels_array[index] = 0xffff0000;
+	    }
+	    
+	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
+	    
+	    return bitmap_sketch_book;
 	}
 }
 
