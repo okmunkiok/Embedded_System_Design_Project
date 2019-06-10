@@ -85,7 +85,6 @@ public class MainActivity extends Activity
 					startActivityForResult(intent, 1);
 				}
 				else if (v==button2) {
-//					Toast.makeText(getApplicationContext(), "asdf", Toast.LENGTH_LONG).show();
 					bitmap2 = resize_samplesize(bitmap1, 3);
 					bitmap_temp = resize_samplesize(bitmap1, 3);
 			        
@@ -100,80 +99,23 @@ public class MainActivity extends Activity
 					filter_width = 3;
 					bitmap2 = dilation(bitmap2, filter_width);
 					bitmap2 = detect_the_number_area(bitmap2);
-//					Toast.makeText(getApplicationContext(), "width before get area = " + Integer.toString(bitmap2.getWidth()), Toast.LENGTH_LONG).show();
-//				    Toast.makeText(getApplicationContext(), "height before get area = " + Integer.toString(bitmap2.getHeight()), Toast.LENGTH_LONG).show();
-//					bitmap_temp = get_image_of_height_number_area(bitmap_temp);
 					bitmap_temp = gray_scaling(bitmap_temp);
 					bitmap_temp = binarization(bitmap_temp);
 					filter_width = 7;
 					bitmap_temp = gaussian_filtering(bitmap_temp, filter_width);
 					bitmap_temp = binarization(bitmap_temp);
-//					filter_width = 3;
-//					bitmap_temp = dilation(bitmap_temp, filter_width);
 					
 					bitmap_temp = get_image_of_height_number_area(bitmap_temp);
 					bitmap_temp = get_rid_of_border_whose_width_is_1_pixel(bitmap_temp);
-//					filter_width = 3;
-//					bitmap_temp = erosion(bitmap_temp, filter_width);
-//					filter_width = 3;
-//					bitmap_temp = gaussian_filtering(bitmap_temp, filter_width);
-//					bitmap_temp = binarization(bitmap_temp);
-//					bitmap_temp = RotateBitmap(bitmap_temp, 1);
-//					bitmap2 = get_image_of_height_number_area(bitmap_temp);
-//					Toast.makeText(getApplicationContext(), "width after get area = " + Integer.toString(bitmap2.getWidth()), Toast.LENGTH_LONG).show();
-//				    Toast.makeText(getApplicationContext(), "height before get area = " + Integer.toString(bitmap2.getHeight()), Toast.LENGTH_LONG).show();
+
+					find_letter_candidate_from_left_to_right(bitmap_temp);			
+					judge_candidate_by_width(bitmap_temp);
 					
 
-////					bitmap2 = gray_scaling(bitmap2);
-////					bitmap2 = binarization(bitmap2);
-//					filter_width = 3;
-//					bitmap2 = gaussian_filtering(bitmap2, filter_width);
-//////					filter_width = 5;
-//////					bitmap2 = dilation(bitmap2, filter_width);
-//////					filter_width = 3;
-////					bitmap2 = erosion(bitmap2, filter_width);
-//					bitmap2 = binarization(bitmap2);
-////					bitmap2 = find_center_to_left(bitmap2);
-					find_letter_candidate_from_left_to_right(bitmap_temp);
-////					bitmap2 = find_center_to_right(bitmap2);
-////					bitmap_temp = get_a_letter(bitmap2);
-////					bitmap2 = get_a_letter(bitmap2);
-					
-					
-
-							
-					//// resize, 가로폭이 200 픽셀로 설정
-//					bitmap3 = resizeBitmap(bitmap2, 200);        
-					
-					//// resize, 비율이 1/8로 축소
-//					bitmap3 = resize_samplesize(bitmap1, 8);
-//					bitmap3 = resize_samplesize(bitmap2, 8);
-		
-					
-//					imageView2.setImageBitmap(bitmap2); 	//// resize된 이진화된 이미지를 ImageView에 보임
-//					imageView2.setImageBitmap(bitmap);
 					imageView2.setImageBitmap(bitmap_temp);
 					
 					for(int i = 0; i < 12; i ++)
 						imageView_each_letters[i].setImageBitmap(each_character_bitmap_array[i]);
-//					imageView_each_letters[0].setImageBitmap(each_character_bitmap_array[0]);
-//					imageView2.setImageBitmap(each_character_bitmap_array[0]);
-//					imageView2.setImageBitmap(each_character_bitmap_array[1]);
-//					imageView2.setImageBitmap(each_character_bitmap_array[2]);
-////					imageView2.setImageBitmap(each_character_bitmap_array[3]);
-////					imageView2.setImageBitmap(each_character_bitmap_array[4]);
-////					imageView2.setImageBitmap(each_character_bitmap_array[5]);
-////					imageView2.setImageBitmap(each_character_bitmap_array[6]);
-////					imageView2.setImageBitmap(each_character_bitmap_array[7]);
-////					imageView2.setImageBitmap(each_character_bitmap_array[8]);
-					
-//					imageView2.setImageBitmap(bitmap_for_actual_processing);
-				
-					
-					
-					
-					
-					
 					
 					imageView2.setDrawingCacheEnabled(true);  //화면에 뿌릴때 캐시를 사용하게 한다
 
@@ -249,13 +191,6 @@ public class MainActivity extends Activity
 	    
 	    int [] pixels_array = new int [width * height];
 	    Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
-//	    Bitmap gray_scaled_bitmap_image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
-	    
-//	    Toast.makeText(getApplicationContext(), Integer.toString(width), Toast.LENGTH_LONG).show();
-//	    Toast.makeText(getApplicationContext(), Integer.toString(height), Toast.LENGTH_LONG).show();
-	    
-//	    int [] pixels_array = new int [width * height];
-	    
 	    before_binarization_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
 
 
@@ -293,13 +228,7 @@ public class MainActivity extends Activity
 	    
 	    int [] pixels_array = new int [width * height];
 	    Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
-//	    Bitmap gray_scaled_bitmap_image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
-	    
-//	    Toast.makeText(getApplicationContext(), Integer.toString(width), Toast.LENGTH_LONG).show();
-//	    Toast.makeText(getApplicationContext(), Integer.toString(height), Toast.LENGTH_LONG).show();
-	    
-//	    int [] pixels_array = new int [width * height];
-	    
+
 	    before_binarization_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
 
 
@@ -393,7 +322,6 @@ public class MainActivity extends Activity
 		
 		for(index = dilation_matrix_array.length - 1; index >= 0; index--){
 			dilation_matrix_array[index] = 1;
-//			Toast.makeText(getApplicationContext(), Integer.toString(index) + "\n" + Integer.toString(dilation_matrix_array[index]), Toast.LENGTH_LONG).show();
 		}
 		
 		for(int y = dilation_width / 2; y < height - dilation_width / 2; y++){
@@ -454,7 +382,6 @@ public class MainActivity extends Activity
 		
 		for(index = erosion_matrix_array.length - 1; index >= 0; index--){
 			erosion_matrix_array[index] = 1;
-//			Toast.makeText(getApplicationContext(), Integer.toString(index) + "\n" + Integer.toString(erosion_matrix_array[index]), Toast.LENGTH_LONG).show();
 		}
 		
 		for(int y = erosion_width / 2; y < height - erosion_width / 2; y++){
@@ -502,67 +429,11 @@ public class MainActivity extends Activity
 		int [] pixels_array_for_erosion = new int [width * height];
 		Bitmap bitmap_for_temp_erosion = erosion(before_hit_or_miss_transform_bitmap_image, hit_or_miss_transform_width);
 		bitmap_for_temp_erosion.getPixels(pixels_array_for_erosion, 0, width, 0, 0, width, height);
-//		for(int i = pixels_array_for_erosion.length - 1; i >= 0; i--)
-//			pixels_array_for_erosion[i] = 0xffffff;
-		
-		
+
 		int [] pixels_array_for_dilation = new int [width * height];
 		for(int i = pixels_array_for_dilation.length - 1; i >= 0; i--)
 			pixels_array_for_dilation[i] = 0xffffff;
 		
-		
-		
-		
-//		
-//		
-//		for(int i = pixels_array_for_process.length - 1; i >= 0 ; i--)
-//			pixels_array_for_process[i] = 0xffffffff;
-//		
-//		
-//		int [] erosion_matrix_array = new int [erosion_width * erosion_width];
-//		int index;
-//		int index_reference;
-//		int square_point;
-//		int is_erosion = 0;
-//		int erosion_width_square = erosion_width * erosion_width;
-//		int escape_for_double_for = 0;
-//		
-//		for(index = erosion_matrix_array.length - 1; index >= 0; index--){
-//			erosion_matrix_array[index] = 1;
-////			Toast.makeText(getApplicationContext(), Integer.toString(index) + "\n" + Integer.toString(erosion_matrix_array[index]), Toast.LENGTH_LONG).show();
-//		}
-//		
-//		for(int y = erosion_width / 2; y < height - erosion_width / 2; y++){
-//			for(int x = erosion_width / 2; x < width - erosion_width / 2; x++){
-//				is_erosion = 0;
-//				escape_for_double_for = 0;
-//				square_point = y * width + x;
-//				
-//				for(int z = - (erosion_width / 2); z <= erosion_width / 2; z++){
-//					index_reference = (y + z) * width + x;
-//					
-//					for(int w = - (erosion_width / 2); w <= erosion_width / 2 ; w++){
-//						index = index_reference + w;
-//						if((pixels_array[index] | 0xff000000) != 0xff000000){
-//							escape_for_double_for = 1;
-//							break;
-//						}
-//						is_erosion ++;
-//					}
-//					
-//					if(escape_for_double_for != 0)
-//						break;
-//				}
-//				
-//				if(is_erosion == erosion_width_square)
-//					pixels_array_for_process[square_point] = 0xff000000;
-//
-//			}
-//		}
-//        
-//		
-//		for(int i = pixels_array.length - 1; i >= 0 ; i--)
-//			pixels_array[i] = pixels_array_for_process[i];
         
 		bitmap_sketch_book.setPixels(pixels_array_for_erosion, 0, width, 0, 0, width, height);
 		
@@ -572,8 +443,7 @@ public class MainActivity extends Activity
 	
 	
 	public Bitmap detect_the_number_area(final Bitmap before_binarization_bitmap_image){
-//		int threshold = 150 * 100;
-		int threshold_of_number_of_color_changed = 12;
+		int threshold_of_number_of_color_changed = 9;
 		int number_of_color_changed = 0;
 		
 	    int width = before_binarization_bitmap_image.getWidth();
@@ -622,20 +492,7 @@ public class MainActivity extends Activity
 	    		}
 	    	}
 	    	
-	    }
-	    
-	    
-////	    제대로 검출됐나 확인하려고 빨갛게 칠하는 테스트 코드
-//	    for(int y = current_max_height_index; y < current_max_height_index + current_max_height; y++){
-//	    	for(int x = 0; x < width - 1; x ++){
-//	    		index = y * width + x;
-//	    		for(x = 0; x < width; x ++){
-//		    		index = y * width + x;
-//		    		pixels_array[index] = 0xffff0000;
-//		    	}
-//	    	}
-//	    }
-	    
+	    }   
 	    
 	    height_index_of_number_area = current_max_height_index;
 		height_of_number_area = current_max_height;
@@ -689,14 +546,6 @@ public class MainActivity extends Activity
 		for(int i = 0; i < filter_matrix_array.length; i++)
 			filter_matrix_array[i] /= filter_element_sum_for_remaking_sum_to_1; 
 		
-		
-////		normal filter
-//		for(int i = 0; i < filter_matrix_array.length ; i++){
-//			filter_matrix_array[i] = (float) 1 / (filter_matrix_array.length);
-//		}
-		
-		
-		
 		for(int y = filter_width / 2; y < height - filter_width / 2; y++){
 			for(int x = filter_width / 2; x < width - filter_width / 2; x++){
 				square_point = y * width + x;
@@ -723,26 +572,15 @@ public class MainActivity extends Activity
 			    		R_sum += (R * filter_matrix_array[index_for_filter]);
 			    		G_sum += (G * filter_matrix_array[index_for_filter]);
 			    		B_sum += (B * filter_matrix_array[index_for_filter]);
-//			    		
-//			    		gray_scaled_rgb = ((R << 5) - (R << 1)) + ((G << 6) - (G << 2) - G) + ((B << 3) + (B << 1) + B);
-//			    		gray_scaled_rgb /= 100;
-//			    		
-//			    		pixels_array[index] = (A << 24) | (gray_scaled_rgb << 16) | (gray_scaled_rgb << 8) | (gray_scaled_rgb);
-//						
+					
 						index_for_filter += 1;
 					}
 				}
-//				R_sum /= 100;
-//				G_sum /= 100;
-//				B_sum /= 100;
 
 				R_sum_int = (int) R_sum;
 				G_sum_int = (int) G_sum;
 				B_sum_int = (int) B_sum;
-//				gray_scaled_rgb = ((R_sum_int << 5) - (R_sum_int << 1)) + ((G_sum_int << 6) - (G_sum_int << 2) - G_sum_int) + ((B_sum_int << 3) + (B_sum_int << 1) + B_sum_int);
-//				gray_scaled_rgb /= 100;
 				pixels_array_for_process[square_point] = 0xff000000 | (R_sum_int << 16) | (G_sum_int << 8) | (B_sum_int);
-//				pixels_array_for_process[square_point] = 0xff000000 | (gray_scaled_rgb << 16) | (gray_scaled_rgb << 8) | (gray_scaled_rgb);
 
 			}
 		}
@@ -762,11 +600,6 @@ public class MainActivity extends Activity
 	    int height = image_which_will_be_cropped.getHeight();
 	    
 	    
-//	    int height_area = height_of_number_area;
-//	    int offset = (height_index_of_number_area - 1) * width;
-	    
-//	    image_which_will_be_cropped.getPixels(pixels_array, offset, width, 0, 0, width, height_area);
-	    
 	    Bitmap image_of_height_number_area = Bitmap.createBitmap(image_which_will_be_cropped
 	    		, 0
 	    		, height_index_of_number_area
@@ -775,11 +608,6 @@ public class MainActivity extends Activity
 	    
 	    
 	    return image_of_height_number_area;
-
-
-//	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
-	    
-//	    return bitmap_sketch_book;
 	}
 	
 
@@ -800,13 +628,14 @@ public class MainActivity extends Activity
 	    int index = 0;
 	    int temp_pixel = 0;
 	    int i = 0;
+	    int if_there_was_in_high_part = 0;
 	    for(int x = 0; x < width; x++){
-	    	y = height * 1 / 5;
+	    	if_there_was_in_high_part = 0;
+	    	y = height * 1 / 4;
     		index = y * width + x;
     		temp_pixel = pixels_array[index];
     		
     		if(temp_pixel == 0xff000000){
-//    			Toast.makeText(getApplicationContext(), "each_character_bitmap_array_index = " + Integer.toString(each_character_bitmap_array_index), Toast.LENGTH_LONG).show();
     			x_min = 99999999;
     			y_min = 99999999;
     			x_max = 0;
@@ -816,73 +645,34 @@ public class MainActivity extends Activity
     			bitmap_temp = bitmap_sketch_book; 
     			each_character_bitmap_array[each_character_bitmap_array_index] = get_a_letter(bitmap_temp);
     			each_character_bitmap_array_index += 1;
-//    			break;
+    			if_there_was_in_high_part = 1;
     		}
-//    		else
-//    			continue;
-    		
-//    		i += 1;
-//    		x = width / 2 - i;
-    		
-    		y = height * 4 / 5;
-    		index = y * width + x;
-    		temp_pixel = pixels_array[index];
-    		
-    		if(temp_pixel == 0xff000000){
-//    			Toast.makeText(getApplicationContext(), "each_character_bitmap_array_index = " + Integer.toString(each_character_bitmap_array_index), Toast.LENGTH_LONG).show();
-    			x_min = 99999999;
-    			y_min = 99999999;
-    			x_max = 0;
-    			y_max = 0;
-    			find_letter(pixels_array, width, height, index, x, y);
-    			bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
-    			bitmap_temp = bitmap_sketch_book; 
-    			each_character_bitmap_array[each_character_bitmap_array_index] = get_a_letter(bitmap_temp);
-    			each_character_bitmap_array_index += 1;
-//    			break;
+
+    		if(if_there_was_in_high_part == 1){
+    			int x_temp = x;
+    			y = height * 3 / 4;
+    			x = (x_max + x_min) / 2;
+        		index = y * width + x;
+        		temp_pixel = pixels_array[index];
+        		
+        		if(temp_pixel == 0xff000000){
+        			x_min = 99999999;
+        			y_min = 99999999;
+        			x_max = 0;
+        			y_max = 0;
+        			find_letter(pixels_array, width, height, index, x, y);
+        			bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
+        			bitmap_temp = bitmap_sketch_book; 
+        			each_character_bitmap_array[each_character_bitmap_array_index] = get_a_letter(bitmap_temp);
+        			each_character_bitmap_array_index += 1;
+        		}
+        		
+        		x = x_temp;
     		}
+    		
     	}
-	    
-//	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
-	    
-//	    return bitmap_sketch_book;
 	}
 	
-	
-	
-	public Bitmap find_center_to_right(final Bitmap before_bitmap_image){
-		
-	    int width = before_bitmap_image.getWidth();
-	    int height = before_bitmap_image.getHeight();
-	    
-	    int [] pixels_array = new int [width * height];
-	    Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
-	    before_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
-	    
-	    x_min = 99999999;
-		y_min = 99999999;
-		x_max = 0;
-		y_max = 0;
-	    
-	    
-	    int y = height * 2 / 3;
-	    int index = 0;
-	    for(int x = width / 2; x < width; x++){
-    		index = y * width + x;
-    		int temp_pixel = pixels_array[index];
-    		
-    		if(temp_pixel == 0xff000000){
-    			find_letter(pixels_array, width, height, index, x, y);
-    			break;
-    		}
-    		else
-    			continue;
-    	}
-	    
-	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
-	    
-	    return bitmap_sketch_book;
-	}
 	
 	
 	public void find_letter(int [] pixels_array, int width, int height, int reference_index, int x, int y){
@@ -1030,9 +820,6 @@ public class MainActivity extends Activity
 		int [] original_pixels_array = new int [width_of_image_which_would_be_extracted * height_of_image_which_would_be_extracted];
 		image_which_will_be_re_created.getPixels(original_pixels_array, 0, width_of_image_which_would_be_extracted, 0, 0, width_of_image_which_would_be_extracted, height_of_image_which_would_be_extracted);
 		
-//		y_min -= height_index_of_number_area;
-//		y_max -= height_index_of_number_area;
-		
 	    int width = x_max - x_min + 1;
 	    int height = y_max - y_min + 1;
 	    int x = 0;
@@ -1041,7 +828,6 @@ public class MainActivity extends Activity
 	    int [] pixels_array = new int [width * height];  
 	    
 	    Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
-//	    Bitmap bitmap_sketch_book = Bitmap.createBitmap(width_of_image_which_would_be_extracted, height_of_image_which_would_be_extracted, Bitmap.Config.ARGB_4444);
 	    
 	    for(y = 0; y < height; y++){
 	    	for(x = 0; x < width; x++){
@@ -1051,54 +837,9 @@ public class MainActivity extends Activity
 	    			pixels_array[index] = 0xff000000;
 	    		else
 	    			pixels_array[index] = 0xffffffff;
-//	    		pixels_array[index] = original_pixels_array[index_for_extract];
-//	    		pixels_array[index] = 0xff00ff00;
-//	    		original_pixels_array[index_for_extract] = 0xff00ff00;
 	    	}
 	    }
 	    
-//	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
-//	    bitmap_sketch_book.getPixels(original_pixels_array, 0, width_of_image_which_would_be_extracted, 0, 0, width_of_image_which_would_be_extracted, height_of_image_which_would_be_extracted);
-	    
-//	    Toast.makeText(getApplicationContext(), Integer.toString(width_of_image_which_would_be_extracted), Toast.LENGTH_LONG).show();
-//	    Toast.makeText(getApplicationContext(), Integer.toString(height_of_image_which_would_be_extracted), Toast.LENGTH_LONG).show();
-//	    Toast.makeText(getApplicationContext(), "x_min = " + Integer.toString(x_min), Toast.LENGTH_LONG).show();
-//	    Toast.makeText(getApplicationContext(), "x_max = " + Integer.toString(x_max), Toast.LENGTH_LONG).show();
-//	    Toast.makeText(getApplicationContext(), "y_min = " + Integer.toString(y_min), Toast.LENGTH_LONG).show();
-//	    Toast.makeText(getApplicationContext(), "y_max = " + Integer.toString(y_max), Toast.LENGTH_LONG).show();
-//	    Toast.makeText(getApplicationContext(), "width = " + Integer.toString(x_max - x_min), Toast.LENGTH_LONG).show();
-//	    Toast.makeText(getApplicationContext(), "height = " + Integer.toString(y_max - y_min), Toast.LENGTH_LONG).show();
-	    
-//	    for(y = 0; y < height_of_image_which_would_be_extracted - 1; y++){
-//	    	x = x_min;
-//	    	index = width_of_image_which_would_be_extracted * y + x;
-//	    	original_pixels_array[index] = 0xff00ff00;
-//	    	
-//	    	x = x_max;
-//	    	index = width_of_image_which_would_be_extracted * y + x;
-//	    	original_pixels_array[index] = 0xff00ff00;
-//	    }
-	    
-//	    for(x = x_min; x < x_max; x++){
-//	    	y = y_min;
-//	    	index = width_of_image_which_would_be_extracted * y + x;
-//	    	original_pixels_array[index] = 0xff0000ff;
-//	    	
-//	    	y = y_max;
-//	    	index = width_of_image_which_would_be_extracted * y + x;
-//	    	original_pixels_array[index] = 0xff0000ff;
-//	    }
-//	    for(y = y_min; y < y_max; y++){
-//	    		x = x_min;
-//	    		index = width_of_image_which_would_be_extracted * y + x;
-//	    		original_pixels_array[index] = 0xff0000ff;
-//	    		
-//	    		x = x_max;
-//	    		index = width_of_image_which_would_be_extracted * y + x;
-//	    		original_pixels_array[index] = 0xff0000ff;
-//	    }
-	    
-//	    bitmap_sketch_book.setPixels(original_pixels_array, 0, width_of_image_which_would_be_extracted, 0, 0, width_of_image_which_would_be_extracted, height_of_image_which_would_be_extracted);
 	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
 	    
 	    return bitmap_sketch_book;
@@ -1153,6 +894,46 @@ public class MainActivity extends Activity
 	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
 	    
 	    return bitmap_sketch_book;
+	}
+	
+	
+	
+	public Bitmap pseudo_erase_image(final Bitmap before_bitmap_image){
+		
+	    int width = before_bitmap_image.getWidth();
+	    int height = before_bitmap_image.getHeight();
+	    
+	    int [] pixels_array = new int [width * height];
+	    Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+	    
+	    before_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
+
+	    int index = 0;
+	    
+	    for(index = 0; index < width * height; index++)
+	    	pixels_array[index] = 0xffffffff;
+
+	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
+	    
+	    return bitmap_sketch_book;
+	}
+	
+	
+	
+	
+	public void judge_candidate_by_width(final Bitmap before_bitmap_image){
+		
+	    int width = before_bitmap_image.getWidth();
+	    int height = before_bitmap_image.getHeight();
+	    
+	    for(int i = 0; i < each_character_bitmap_array_index; i++){
+	    	if(each_character_bitmap_array[i].getWidth() > width / 20){
+	    		each_character_bitmap_array[i] = pseudo_erase_image(each_character_bitmap_array[i]);
+	    	}
+	    	else if(each_character_bitmap_array[i].getHeight() < height / 6){
+	    		each_character_bitmap_array[i] = pseudo_erase_image(each_character_bitmap_array[i]);
+	    	}
+	    }
 	}
 }
 
