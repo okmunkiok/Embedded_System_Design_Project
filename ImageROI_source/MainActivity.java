@@ -134,7 +134,7 @@ public class MainActivity extends Activity
 ////					bitmap2 = erosion(bitmap2, filter_width);
 //					bitmap2 = binarization(bitmap2);
 ////					bitmap2 = find_center_to_left(bitmap2);
-					find_from_left_to_right(bitmap_temp);
+					find_letter_candidate_from_left_to_right(bitmap_temp);
 ////					bitmap2 = find_center_to_right(bitmap2);
 ////					bitmap_temp = get_a_letter(bitmap2);
 ////					bitmap2 = get_a_letter(bitmap2);
@@ -784,7 +784,7 @@ public class MainActivity extends Activity
 	
 
 	
-	public void find_from_left_to_right(final Bitmap before_bitmap_image){
+	public void find_letter_candidate_from_left_to_right(final Bitmap before_bitmap_image){
 		
 	    int width = before_bitmap_image.getWidth();
 	    int height = before_bitmap_image.getHeight();
@@ -796,12 +796,12 @@ public class MainActivity extends Activity
 	    
 	    
 	    
-	    int y = height * 2 / 3;
+	    int y = 0;
 	    int index = 0;
 	    int temp_pixel = 0;
 	    int i = 0;
 	    for(int x = 0; x < width; x++){
-	    	y = height * 2 / 3;
+	    	y = height * 1 / 5;
     		index = y * width + x;
     		temp_pixel = pixels_array[index];
     		
@@ -823,6 +823,24 @@ public class MainActivity extends Activity
     		
 //    		i += 1;
 //    		x = width / 2 - i;
+    		
+    		y = height * 4 / 5;
+    		index = y * width + x;
+    		temp_pixel = pixels_array[index];
+    		
+    		if(temp_pixel == 0xff000000){
+//    			Toast.makeText(getApplicationContext(), "each_character_bitmap_array_index = " + Integer.toString(each_character_bitmap_array_index), Toast.LENGTH_LONG).show();
+    			x_min = 99999999;
+    			y_min = 99999999;
+    			x_max = 0;
+    			y_max = 0;
+    			find_letter(pixels_array, width, height, index, x, y);
+    			bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
+    			bitmap_temp = bitmap_sketch_book; 
+    			each_character_bitmap_array[each_character_bitmap_array_index] = get_a_letter(bitmap_temp);
+    			each_character_bitmap_array_index += 1;
+//    			break;
+    		}
     	}
 	    
 //	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
