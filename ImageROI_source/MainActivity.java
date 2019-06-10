@@ -50,6 +50,7 @@ public class MainActivity extends Activity
 	int y_min = 99999999;
 	int x_max = 0;
 	int y_max = 0;
+	int is_alphabet_combined_or_not = 1;
 	
 	int test_index = 0;
 	
@@ -87,8 +88,7 @@ public class MainActivity extends Activity
 				else if (v==button2) {
 					bitmap2 = resize_samplesize(bitmap1, 3);
 					bitmap_temp = resize_samplesize(bitmap1, 3);
-			        
-					
+			          
 					bitmap2 = gray_scaling(bitmap2);
 					bitmap2 = binarization(bitmap2);
 					filter_width = 3;
@@ -665,6 +665,8 @@ public class MainActivity extends Activity
         			bitmap_temp = bitmap_sketch_book; 
         			each_character_bitmap_array[each_character_bitmap_array_index] = get_a_letter(bitmap_temp);
         			each_character_bitmap_array_index += 1;
+        			
+        			is_alphabet_combined_or_not = 0;
         		}
         		
         		x = x_temp;
@@ -918,20 +920,36 @@ public class MainActivity extends Activity
 	    return bitmap_sketch_book;
 	}
 	
-	
-	
-	
+
 	public void judge_candidate_by_width(final Bitmap before_bitmap_image){
 		
 	    int width = before_bitmap_image.getWidth();
 	    int height = before_bitmap_image.getHeight();
 	    
 	    for(int i = 0; i < each_character_bitmap_array_index; i++){
-	    	if(each_character_bitmap_array[i].getWidth() > width / 20){
+	    	int each_candidate_width = each_character_bitmap_array[i].getWidth();
+	    	int each_candidate_height = each_character_bitmap_array[i].getHeight();
+	    	
+	    	int [] pixels_array = new int [each_candidate_width * each_candidate_height];
+	    	before_bitmap_image.getPixels(pixels_array, 0, each_candidate_width, 0, 0, each_candidate_width, each_candidate_height);
+	    	
+	    	if(each_candidate_width > width / 20){
 	    		each_character_bitmap_array[i] = pseudo_erase_image(each_character_bitmap_array[i]);
 	    	}
-	    	else if(each_character_bitmap_array[i].getHeight() < height / 6){
+	    	else if(each_candidate_height < height / 6){
 	    		each_character_bitmap_array[i] = pseudo_erase_image(each_character_bitmap_array[i]);
+	    	}
+	    	else if(pixels_array[0] == 0xff000000){
+	    		if(pixels_array[each_candidate_width * (each_candidate_height - 1) + 1] == 0xff000000)
+	    			if(pixels_array[each_candidate_width - 1] == 0xffffffff)
+	    				if(pixels_array[each_candidate_width * each_candidate_height - 1] == 0xffffffff)
+	    					each_character_bitmap_array[i] = pseudo_erase_image(each_character_bitmap_array[i]);
+	    	}
+	    	else if(pixels_array[0] == 0xffffffff){
+	    		if(pixels_array[each_candidate_width * (each_candidate_height - 1) + 1] == 0xffffffff)
+	    			if(pixels_array[each_candidate_width - 1] == 0xff000000)
+	    				if(pixels_array[each_candidate_width * each_candidate_height - 1] == 0xff000000)
+	    					each_character_bitmap_array[i] = pseudo_erase_image(each_character_bitmap_array[i]);
 	    	}
 	    }
 	}
