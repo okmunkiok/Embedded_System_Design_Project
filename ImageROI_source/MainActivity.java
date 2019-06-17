@@ -45,6 +45,7 @@ public class MainActivity extends Activity
 	Bitmap bitmap_for_actual_processing; // for actual processing	
 	
 	int height_index_of_number_area = 0;
+	int afford_of_height_index_of_number_area = 4;
 	int height_of_number_area = 0;
 	int x_min = 99999999;
 	int y_min = 99999999;
@@ -101,9 +102,11 @@ public class MainActivity extends Activity
 					bitmap2 = detect_the_number_area(bitmap2);
 					bitmap_temp = gray_scaling(bitmap_temp);
 					bitmap_temp = binarization(bitmap_temp);
-					filter_width = 7;
+					filter_width = 5;
 					bitmap_temp = gaussian_filtering(bitmap_temp, filter_width);
 					bitmap_temp = binarization(bitmap_temp);
+//					filter_width = 3;
+//					bitmap_temp = erosion(bitmap_temp, filter_width);
 					
 					bitmap_temp = get_image_of_height_number_area(bitmap_temp);
 					bitmap_temp = get_rid_of_border_whose_width_is_1_pixel(bitmap_temp);
@@ -495,7 +498,12 @@ public class MainActivity extends Activity
 	    }   
 	    
 	    height_index_of_number_area = current_max_height_index;
-		height_of_number_area = current_max_height;
+	    height_of_number_area = current_max_height;
+	    if(height_index_of_number_area > afford_of_height_index_of_number_area){
+	    	height_index_of_number_area -= afford_of_height_index_of_number_area;
+	    	height_of_number_area += 2 * afford_of_height_index_of_number_area;
+	    }
+		
 	    
 
 	    bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
@@ -631,7 +639,7 @@ public class MainActivity extends Activity
 	    int if_there_was_in_high_part = 0;
 	    for(int x = 0; x < width; x++){
 	    	if_there_was_in_high_part = 0;
-	    	y = height * 1 / 4;
+	    	y = height * 1 / 3;
     		index = y * width + x;
     		temp_pixel = pixels_array[index];
     		
@@ -648,25 +656,27 @@ public class MainActivity extends Activity
     			if_there_was_in_high_part = 1;
     		}
 
-    		if(if_there_was_in_high_part == 1){
+    		if(if_there_was_in_high_part == 1 && (x_max - x_min) < width / 20){
     			int x_temp = x;
-    			y = height * 3 / 4;
-    			x = (x_max + x_min) / 2;
-        		index = y * width + x;
-        		temp_pixel = pixels_array[index];
-        		
-        		if(temp_pixel == 0xff000000){
-        			x_min = 99999999;
-        			y_min = 99999999;
-        			x_max = 0;
-        			y_max = 0;
-        			find_letter(pixels_array, width, height, index, x, y);
-        			bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
-        			bitmap_temp = bitmap_sketch_book; 
-        			each_character_bitmap_array[each_character_bitmap_array_index] = get_a_letter(bitmap_temp);
-        			each_character_bitmap_array_index += 1;
-        			
-        			is_alphabet_combined_or_not = 0;
+    			for(x = x_min; x < x_max; x++){
+    				y = height * 2 / 3;
+            		index = y * width + x;
+            		temp_pixel = pixels_array[index];
+            		
+            		if(temp_pixel == 0xff000000){
+            			x_min = 99999999;
+            			y_min = 99999999;
+            			x_max = 0;
+            			y_max = 0;
+            			find_letter(pixels_array, width, height, index, x, y);
+            			bitmap_sketch_book.setPixels(pixels_array, 0, width, 0, 0, width, height);
+            			bitmap_temp = bitmap_sketch_book; 
+            			each_character_bitmap_array[each_character_bitmap_array_index] = get_a_letter(bitmap_temp);
+            			each_character_bitmap_array_index += 1;
+            			
+            			is_alphabet_combined_or_not = 0;
+            		}
+    			
         		}
         		
         		x = x_temp;
