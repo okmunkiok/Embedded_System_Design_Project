@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import android.content.pm.PackageManager;
 import android.widget.TextView;
 import android.app.Activity;
 import android.content.Intent;
@@ -32,7 +33,7 @@ public class MainActivity extends Activity
 {
     ImageView imageView1, imageView2; //// ImageView1은 원래 이미지를 보이고 ImageView2는 이미지의 이진화 결과를 보임
     ImageView [] imageView_each_letters = new ImageView [12];
-    Button button1, button2;
+    Button button1, button2, button4;
     Bitmap bitmap1; //// original image
     Bitmap bitmap_temp;
     Bitmap bitmap_temp_2;
@@ -57,7 +58,7 @@ public class MainActivity extends Activity
     int y_min = 99999999;
     int x_max = 0;
     int y_max = 0;
-//    int is_alphabet_combined_or_not = 0;
+    int is_alphabet_combined_or_not = 0;
 
     int test_index = 0;
 
@@ -82,7 +83,11 @@ public class MainActivity extends Activity
         imageView_each_letters[10] = (ImageView) findViewById (R.id.ImageView11);
         imageView_each_letters[11] = (ImageView) findViewById (R.id.ImageView12);
         button1 = (Button)findViewById(R.id.button1);
+//        button for choose image from gallery
         button2 = (Button)findViewById(R.id.button2);
+//        button for actual activation
+        button4 = (Button)findViewById(R.id.button4);
+//        button re-starting app for easy testing
 
 
         text_view_whether_letter_or_number_or_noise[0] =  (TextView) findViewById (R.id.textView1);
@@ -169,12 +174,15 @@ public class MainActivity extends Activity
                         Toast.makeText(getApplicationContext(), "Save Error", Toast.LENGTH_SHORT).show();
                     }
                 }
+                else if(v == button4)
+                    restart();
 
             }
         };
 
         button1.setOnClickListener(listener);
         button2.setOnClickListener(listener);
+        button4.setOnClickListener(listener);
     }
 
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -652,9 +660,6 @@ public class MainActivity extends Activity
         Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
         before_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
 
-
-
-
         int y = 0;
         int index = 0;
         int temp_pixel = 0;
@@ -1001,8 +1006,14 @@ public class MainActivity extends Activity
         }
 
 
+        if(index == 8)
+            is_alphabet_combined_or_not = 0;
+        else
+            is_alphabet_combined_or_not = 1;
+
+
         for(int i = 0; index_of_letter_and_number[i] != 0; i++){
-            if(index == 8){
+            if(is_alphabet_combined_or_not == 0){
                 if(i == 0 || i == 1)
                     text_view_whether_letter_or_number_or_noise[index_of_letter_and_number[i]].setText("숫자");
                 else if(i == 2)
@@ -1012,7 +1023,7 @@ public class MainActivity extends Activity
                 else
                     text_view_whether_letter_or_number_or_noise[index_of_letter_and_number[i]].setText("숫자");
             }
-            else if(index == 7){
+            else if(is_alphabet_combined_or_not == 1){
                 if(i == 0 || i == 1)
                     text_view_whether_letter_or_number_or_noise[index_of_letter_and_number[i]].setText("숫자");
                 else if(i == 2)
@@ -1021,6 +1032,18 @@ public class MainActivity extends Activity
                     text_view_whether_letter_or_number_or_noise[index_of_letter_and_number[i]].setText("숫자");
             }
         }
+    }
+
+
+//    source: http://www.masterqna.com/android/81347/%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-app-%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%97%90-%EB%8C%80%ED%95%B4-%EC%A7%88%EB%AC%B8%EB%93%9C%EB%A6%BD%EB%8B%88%EB%8B%A4
+    public void restart(){
+
+        Intent i = getBaseContext().getPackageManager().
+                getLaunchIntentForPackage(getBaseContext().getPackageName());
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+
     }
 }
 
