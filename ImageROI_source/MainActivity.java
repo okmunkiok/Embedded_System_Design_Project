@@ -36,7 +36,7 @@ public class MainActivity extends Activity
     Bitmap bitmap1; //// original image
     Bitmap bitmap_temp;
     Bitmap bitmap_temp_2;
-    Bitmap [] each_character_bitmap_array = new Bitmap [20];
+    Bitmap [] each_character_bitmap_array = new Bitmap [12];
     int each_character_bitmap_array_index = 0;
 
     int filter_width = 0;
@@ -57,9 +57,11 @@ public class MainActivity extends Activity
     int y_min = 99999999;
     int x_max = 0;
     int y_max = 0;
-    int is_alphabet_combined_or_not = 1;
+//    int is_alphabet_combined_or_not = 0;
 
     int test_index = 0;
+
+    TextView [] text_view_whether_letter_or_number_or_noise = new TextView [12];
 
     @Override protected void onCreate(Bundle savedInstanceState)
     {
@@ -82,9 +84,20 @@ public class MainActivity extends Activity
         button1 = (Button)findViewById(R.id.button1);
         button2 = (Button)findViewById(R.id.button2);
 
-        TextView [] text_view_whether_letter_or_number_or_noise = new TextView [12];
+
         text_view_whether_letter_or_number_or_noise[0] =  (TextView) findViewById (R.id.textView1);
-        text_view_whether_letter_or_number_or_noise[0].setText("sdf");
+        text_view_whether_letter_or_number_or_noise[1] =  (TextView) findViewById (R.id.textView2);
+        text_view_whether_letter_or_number_or_noise[2] =  (TextView) findViewById (R.id.textView3);
+        text_view_whether_letter_or_number_or_noise[3] =  (TextView) findViewById (R.id.textView4);
+        text_view_whether_letter_or_number_or_noise[4] =  (TextView) findViewById (R.id.textView5);
+        text_view_whether_letter_or_number_or_noise[5] =  (TextView) findViewById (R.id.textView6);
+        text_view_whether_letter_or_number_or_noise[6] =  (TextView) findViewById (R.id.textView7);
+        text_view_whether_letter_or_number_or_noise[7] =  (TextView) findViewById (R.id.textView8);
+        text_view_whether_letter_or_number_or_noise[8] =  (TextView) findViewById (R.id.textView9);
+        text_view_whether_letter_or_number_or_noise[9] =  (TextView) findViewById (R.id.textView10);
+        text_view_whether_letter_or_number_or_noise[10] =  (TextView) findViewById (R.id.textView11);
+        text_view_whether_letter_or_number_or_noise[11] =  (TextView) findViewById (R.id.textView12);
+//        text_view_whether_letter_or_number_or_noise[0].setText("sdf");
 
         Button.OnClickListener listener = new Button.OnClickListener(){
 
@@ -684,7 +697,7 @@ public class MainActivity extends Activity
                         each_character_bitmap_array[each_character_bitmap_array_index] = get_a_letter(bitmap_temp);
                         each_character_bitmap_array_index += 1;
 
-                        is_alphabet_combined_or_not = 0;
+//                        is_alphabet_combined_or_not = 1;
                     }
 
                 }
@@ -945,31 +958,67 @@ public class MainActivity extends Activity
 
         int width = before_bitmap_image.getWidth();
         int height = before_bitmap_image.getHeight();
+        int erase_or_not = 0;
+        int [] index_of_letter_and_number = new int [12];
+        int index = 0;
 
         for(int i = 0; i < each_character_bitmap_array_index; i++){
             int each_candidate_width = each_character_bitmap_array[i].getWidth();
             int each_candidate_height = each_character_bitmap_array[i].getHeight();
+            erase_or_not = 0;
 
             int [] pixels_array = new int [each_candidate_width * each_candidate_height];
             before_bitmap_image.getPixels(pixels_array, 0, each_candidate_width, 0, 0, each_candidate_width, each_candidate_height);
 
-            if(each_candidate_width > width / 20){
-                each_character_bitmap_array[i] = pseudo_erase_image(each_character_bitmap_array[i]);
-            }
-            else if(each_candidate_height < height / 6){
-                each_character_bitmap_array[i] = pseudo_erase_image(each_character_bitmap_array[i]);
-            }
+            if(each_candidate_width > width / 20)
+                erase_or_not = 1;
+
+            else if(each_candidate_height < height / 6)
+                erase_or_not = 1;
+
             else if(pixels_array[0] == 0xff000000){
                 if(pixels_array[each_candidate_width * (each_candidate_height - 1) + 1] == 0xff000000)
                     if(pixels_array[each_candidate_width - 1] == 0xffffffff)
                         if(pixels_array[each_candidate_width * each_candidate_height - 1] == 0xffffffff)
-                            each_character_bitmap_array[i] = pseudo_erase_image(each_character_bitmap_array[i]);
+                            erase_or_not = 1;
             }
             else if(pixels_array[0] == 0xffffffff){
                 if(pixels_array[each_candidate_width * (each_candidate_height - 1) + 1] == 0xffffffff)
                     if(pixels_array[each_candidate_width - 1] == 0xff000000)
                         if(pixels_array[each_candidate_width * each_candidate_height - 1] == 0xff000000)
-                            each_character_bitmap_array[i] = pseudo_erase_image(each_character_bitmap_array[i]);
+                            erase_or_not = 1;
+            }
+
+
+            if(erase_or_not == 1){
+                each_character_bitmap_array[i] = pseudo_erase_image(each_character_bitmap_array[i]);
+                text_view_whether_letter_or_number_or_noise[i].setText("노이즈");
+            }
+            else{
+                index_of_letter_and_number[index] = i;
+                index += 1;
+            }
+        }
+
+
+        for(int i = 0; index_of_letter_and_number[i] != 0; i++){
+            if(index == 8){
+                if(i == 0 || i == 1)
+                    text_view_whether_letter_or_number_or_noise[index_of_letter_and_number[i]].setText("숫자");
+                else if(i == 2)
+                    text_view_whether_letter_or_number_or_noise[index_of_letter_and_number[i]].setText("자음");
+                else if(i == 3)
+                    text_view_whether_letter_or_number_or_noise[index_of_letter_and_number[i]].setText("모음");
+                else
+                    text_view_whether_letter_or_number_or_noise[index_of_letter_and_number[i]].setText("숫자");
+            }
+            else if(index == 7){
+                if(i == 0 || i == 1)
+                    text_view_whether_letter_or_number_or_noise[index_of_letter_and_number[i]].setText("숫자");
+                else if(i == 2)
+                    text_view_whether_letter_or_number_or_noise[index_of_letter_and_number[i]].setText("자모음");
+                else
+                    text_view_whether_letter_or_number_or_noise[index_of_letter_and_number[i]].setText("숫자");
             }
         }
     }
