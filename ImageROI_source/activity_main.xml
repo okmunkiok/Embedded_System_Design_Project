@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout 
-	xmlns:android="http://schemas.android.com/apk/res/android"   
-	android:layout_width="match_parent" 
-	android:layout_height="match_parent" 
-	android:background="#ffffff">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff">
 
     <ImageView
         android:id="@+id/image1"
@@ -18,18 +18,18 @@
         android:layout_height="270dp"
         android:layout_above="@+id/button2"
         android:layout_centerHorizontal="true" />
-    
+
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="16dp"
+        android:layout_alignParentBottom="true"
         android:layout_marginLeft="30dp"
-        android:text="Gallery Open"
+        android:layout_marginBottom="16dp"
+        android:text="Choose Image"
         android:textSize="18dp" />
-    
+
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
@@ -37,9 +37,9 @@
         android:layout_alignBaseline="@+id/button1"
         android:layout_alignBottom="@+id/button1"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="16dp"
         android:layout_marginRight="30dp"
-        android:text="Binarize(이진화)" />
+        android:layout_marginBottom="16dp"
+        android:text="Do it!" />
 
     <ImageView
         android:id="@+id/ImageView01"
@@ -128,10 +128,9 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_below="@+id/image1"
+        android:layout_alignParentLeft="true"
         android:layout_marginTop="14dp"
-        android:text="글자"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -140,16 +139,14 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/textView1"
         android:layout_toRightOf="@+id/ImageView01"
-        android:text="글자"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView2"
         android:layout_alignLeft="@+id/ImageView03"
-        android:text="글자"
+        android:layout_alignBottom="@+id/textView2"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -157,9 +154,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/textView3"
-        android:layout_alignBottom="@+id/textView3"
         android:layout_alignLeft="@+id/ImageView04"
-        android:text="글자"
+        android:layout_alignBottom="@+id/textView3"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -167,9 +163,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/textView5"
-        android:layout_alignBottom="@+id/textView5"
         android:layout_alignLeft="@+id/ImageView06"
-        android:text="글자"
+        android:layout_alignBottom="@+id/textView5"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -177,9 +172,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/textView4"
-        android:layout_alignBottom="@+id/textView4"
         android:layout_alignLeft="@+id/ImageView05"
-        android:text="글자"
+        android:layout_alignBottom="@+id/textView4"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -188,7 +182,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/ImageView07"
         android:layout_alignParentLeft="true"
-        android:text="글자"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -197,7 +190,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/ImageView08"
         android:layout_alignLeft="@+id/ImageView08"
-        android:text="글자"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -206,7 +198,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/ImageView09"
         android:layout_alignLeft="@+id/textView3"
-        android:text="글자"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -215,7 +206,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/ImageView10"
         android:layout_alignLeft="@+id/textView4"
-        android:text="글자"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -224,7 +214,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/ImageView11"
         android:layout_toRightOf="@+id/ImageView04"
-        android:text="글자"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -233,8 +222,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/ImageView12"
         android:layout_alignLeft="@+id/textView6"
-        android:text="글자"
         android:textAppearance="?android:attr/textAppearanceSmall" />
- 
- </RelativeLayout>  
-    
+
+</RelativeLayout>
+
