@@ -133,7 +133,7 @@ public class MainActivity extends Activity
                     bitmap_temp = binarization(bitmap_temp);
 //                    filter_width = 5;
 //                    bitmap_temp = dilation(bitmap_temp, filter_width);
-//					filter_width = 3;
+//					filter_width = 5;
 //					bitmap_temp = erosion(bitmap_temp, filter_width);
 
                     bitmap_temp = get_image_of_height_number_area(bitmap_temp);
@@ -149,6 +149,7 @@ public class MainActivity extends Activity
                     if(is_alphabet_combined_or_not == 0){
                         for(int i = 0; index_of_letter_and_number[i] != 0; i++){
                             if(i == 2){
+                                distinguish_c​onsonants(each_character_bitmap_array[index_of_letter_and_number[i]], index_of_letter_and_number[i]);
                                 continue;
                             }
                             else if(i == 3){
@@ -1757,6 +1758,385 @@ public class MainActivity extends Activity
         }
 
 
+    }
+
+
+
+    public void distinguish_c​onsonants (final Bitmap before_bitmap_image, int image_index){
+
+        int black = 0xff000000;
+        int white = 0xffffffff;
+        int width = before_bitmap_image.getWidth();
+        int[] width_divided_by_24 = new int[24];
+        for (int i = 0; i < width_divided_by_24.length; i++)
+            width_divided_by_24[i] = (width * (i + 1) / 24);
+
+        int height = before_bitmap_image.getHeight();
+        int[] height_divided_by_24 = new int[24];
+        for (int i = 0; i < height_divided_by_24.length; i++)
+            height_divided_by_24[i] = (height * (i + 1) / 24);
+
+        int [] detecting_all_part_left_of_each_height_divided_by_24 = new int [24];
+        int [] detecting_all_part_right_of_each_height_divided_by_24 = new int [detecting_all_part_left_of_each_height_divided_by_24.length];
+
+        int[] detecting_all_part_top_of_each_width_divided_by_24 = new int[24];
+        int[] detecting_all_part_bottom_of_each_width_divided_by_24 = new int[detecting_all_part_top_of_each_width_divided_by_24.length];
+
+        int index = 0;
+
+        int[] pixels_array = new int[width * height];
+        Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+
+        before_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
+
+
+        int is_right_blocked = 0;
+        int is_left_blocked = 0;
+        int is_top_blocked = 0;
+        int is_bottom_blocked = 0;
+        float is_right_blocked_rate = 0;
+        float is_left_blocked_rate = 0;
+        float is_top_blocked_rate = 0;
+        float is_bottom_blocked_rate = 0;
+        for(int y = height / 3; y < height * 2 / 3; y++){
+            int x = width / 2;
+            int y_temp = y;
+            index = y * width + x;
+
+            if(pixels_array[index] == black)
+                continue;
+
+            for(x = width / 2; x < width; x++){
+                index = y * width + x;
+                if(pixels_array[index] == black){
+                    is_right_blocked += 1;
+                    break;
+                }
+            }
+            for(x = width / 2; x >= 0; x--){
+                index = y * width + x;
+                if(pixels_array[index] == black){
+                    is_left_blocked += 1;
+                    break;
+                }
+            }
+        }
+        is_right_blocked_rate = (float) is_right_blocked / (height / 3);
+        is_left_blocked_rate = (float) is_left_blocked / (height / 3);
+        for(int x = width / 3; x < width * 2 / 3; x++){
+            int y = height / 2;
+            int x_temp = x;
+            index = y * width + x;
+
+            if(pixels_array[index] == black)
+                continue;
+
+            for(y = height / 2; y >= 0; y--){
+                index = y * width + x;
+                if(pixels_array[index] == black){
+                    is_top_blocked += 1;
+                    break;
+                }
+            }
+            for(y = height / 2; y < height; y++){
+                index = y * width + x;
+                if(pixels_array[index] == black){
+                    is_bottom_blocked += 1;
+                    break;
+                }
+            }
+        }
+        is_top_blocked_rate = (float) is_top_blocked / (width / 3);
+        is_bottom_blocked_rate = (float) is_bottom_blocked / (width / 3);
+
+
+//        detecting ㄴ
+        if(is_right_blocked_rate < 0.2) {
+            if (is_left_blocked_rate > 0.8) {
+                if (is_top_blocked_rate < 0.2) {
+                    if (is_bottom_blocked_rate > 0.8) {
+                        text_view_whether_letter_or_number_or_noise[image_index].setText("ㄴ");
+                        return;
+                    }
+                }
+                //        detecting ㄷ
+                else if (is_top_blocked_rate > 0.8) {
+                    if (is_bottom_blocked_rate > 0.8) {
+                        text_view_whether_letter_or_number_or_noise[image_index].setText("ㄷ");
+                        return;
+                    }
+                }
+            }
+        }
+        else if(is_right_blocked_rate > 0.8){
+            if(is_left_blocked_rate < 0.2){
+                if(is_top_blocked_rate > 0.8){
+                    if(is_bottom_blocked_rate < 0.2){
+                        text_view_whether_letter_or_number_or_noise[image_index].setText("ㄱ");
+                        return;
+                    }
+                }
+            }
+        }
+
+        int[] left = new int[2];
+        int[] left_validity = new int[2];
+        int[] right = new int[2];
+        int[] right_validity = new int[2];
+        int[] top = new int[2];
+        int[] top_validity = new int[2];
+        int[] bottom = new int[2];
+        int[] bottom_validity = new int[2];
+
+        int index_temp_for_less_multiplying = 0;
+
+
+//        detect left and right
+        for (int y = 0; y < height - 1; y++) {
+
+            if (y == 0) {
+                index_temp_for_less_multiplying = y * width;
+                for (int x = 0; x < width; x++) {
+                    index = index_temp_for_less_multiplying + x;
+
+                    if (pixels_array[index] == black) {
+                        left[0] = x;
+                        left_validity[0] = 1;
+                        break;
+                    }
+                }
+
+                for (int x = width - 1; x > 0; x--) {
+                    index = index_temp_for_less_multiplying + x;
+
+                    if (pixels_array[index] == black) {
+                        right[0] = x;
+                        right_validity[0] = 1;
+                        break;
+                    }
+                }
+            }
+
+            index_temp_for_less_multiplying = (y + 1) * width;
+            for (int x = 0; x < width; x++) {
+                index = index_temp_for_less_multiplying + x;
+
+                if (pixels_array[index] == black) {
+                    left[1] = x;
+                    left_validity[1] = 1;
+                    break;
+                }
+            }
+
+            for (int x = width - 1; x > 0; x--) {
+                index = index_temp_for_less_multiplying + x;
+
+                if (pixels_array[index] == black) {
+                    right[1] = x;
+                    right_validity[1] = 1;
+                    break;
+                }
+            }
+
+            if (left_validity[0] == 1 && right_validity[0] == 1 && left_validity[1] == 1 && right_validity[1] == 1) {
+
+//                detecting left and right
+                for(int j = 0; j < detecting_all_part_left_of_each_height_divided_by_24.length; j++){
+                    if(y == height_divided_by_24[j]){
+                        detecting_all_part_left_of_each_height_divided_by_24[j] = left[0];
+                        detecting_all_part_right_of_each_height_divided_by_24[j] = right[0];
+                    }
+                }
+            }
+
+
+            left[0] = left[1];
+            left_validity[0] = left_validity[1];
+            right[0] = right[1];
+            right_validity[0] = right_validity[1];
+
+//            left[1] = 0;
+            left_validity[1] = 0;
+//            right[1] = 0;
+            right_validity[1] = 0;
+        }
+
+        for (int i = 0; i < left.length; i++) {
+            left[i] = 0;
+            left_validity[i] = 0;
+            right[i] = 0;
+            right_validity[i] = 0;
+        }
+
+
+//        from here
+//        right -> bottom
+//        left -> top
+
+//        detect top and bottom
+        for (int x = 0; x < width - 1; x++) {
+
+            if (x == 0) {
+                for (int y = 0; y < height; y++) {
+                    index = y * width + x;
+
+                    if (pixels_array[index] == black) {
+                        top[0] = y;
+                        top_validity[0] = 1;
+                        break;
+                    }
+                }
+
+                for (int y = height - 1; y > 0; y--) {
+                    index = y * width + x;
+
+                    if (pixels_array[index] == black) {
+                        bottom[0] = y;
+                        bottom_validity[0] = 1;
+                        break;
+                    }
+                }
+            }
+
+
+            for (int y = 0; y < height; y++) {
+                index = width * y + x;
+
+                if (pixels_array[index] == black) {
+                    top[1] = y;
+                    top_validity[1] = 1;
+                    break;
+                }
+            }
+
+            for (int y = height - 1; y > 0; y--) {
+                index = width * y + x;
+
+                if (pixels_array[index] == black) {
+                    bottom[1] = y;
+                    bottom_validity[1] = 1;
+                    break;
+                }
+            }
+
+            if (top_validity[0] == 1 && bottom_validity[0] == 1 && top_validity[1] == 1 && bottom_validity[1] == 1) {
+
+//                    detecting top and bottom
+                for(int j = 0; j < detecting_all_part_left_of_each_height_divided_by_24.length; j++){
+                    if(x == width_divided_by_24[j]){
+                        detecting_all_part_top_of_each_width_divided_by_24[j] = top[0];
+                        detecting_all_part_bottom_of_each_width_divided_by_24[j] = bottom[0];
+                    }
+                }
+            }
+
+
+            top[0] = top[1];
+            top_validity[0] = top_validity[1];
+            bottom[0] = bottom[1];
+            bottom_validity[0] = bottom_validity[1];
+
+//            left[1] = 0;
+            top_validity[1] = 0;
+//            right[1] = 0;
+            bottom_validity[1] = 0;
+        }
+
+
+        //        calculate rate for detecting ㅅ
+        int [] detecting_siot_at_each_case = new int[5];
+        float[] detecting_siot_at_each_case_probability = new float[detecting_siot_at_each_case.length];
+        for (int i = detecting_all_part_left_of_each_height_divided_by_24.length / 2; i < detecting_all_part_left_of_each_height_divided_by_24.length - 1; i++) {
+            if (detecting_all_part_left_of_each_height_divided_by_24[i] > detecting_all_part_left_of_each_height_divided_by_24[i + 1])
+                detecting_siot_at_each_case[0] += 1;
+        }
+        detecting_siot_at_each_case_probability[0] = (float) detecting_siot_at_each_case[0] / (detecting_all_part_left_of_each_height_divided_by_24.length / 2 - 1);
+        for (int i = detecting_all_part_left_of_each_height_divided_by_24.length / 2; i < detecting_all_part_left_of_each_height_divided_by_24.length - 1; i++) {
+            if (detecting_all_part_right_of_each_height_divided_by_24[i + 1] > detecting_all_part_right_of_each_height_divided_by_24[i])
+                detecting_siot_at_each_case[1] += 1;
+        }
+        detecting_siot_at_each_case_probability[1] = (float) detecting_siot_at_each_case[1] / (detecting_all_part_left_of_each_height_divided_by_24.length / 2 - 1);
+        for (int i = 0; i < detecting_all_part_bottom_of_each_width_divided_by_24.length / 3; i++) {
+            if (detecting_all_part_top_of_each_width_divided_by_24[i] > detecting_all_part_top_of_each_width_divided_by_24[i + 1])
+                detecting_siot_at_each_case[2] += 1;
+        }
+        detecting_siot_at_each_case_probability[2] = (float) detecting_siot_at_each_case[2] / (detecting_all_part_bottom_of_each_width_divided_by_24.length / 3);
+        for (int i = detecting_all_part_bottom_of_each_width_divided_by_24.length * 2 / 3; i < detecting_all_part_bottom_of_each_width_divided_by_24.length - 1; i++) {
+            if (detecting_all_part_top_of_each_width_divided_by_24[i] < detecting_all_part_top_of_each_width_divided_by_24[i + 1])
+                detecting_siot_at_each_case[3] += 1;
+        }
+        detecting_siot_at_each_case_probability[3] = (float) detecting_siot_at_each_case[3] / (detecting_all_part_bottom_of_each_width_divided_by_24.length / 3 - 1);
+
+        if (detecting_siot_at_each_case_probability[0] > 0.5)
+            if (detecting_siot_at_each_case_probability[1] > 0.5)
+                if (detecting_siot_at_each_case_probability[2] > 0.5)
+                    if (detecting_siot_at_each_case_probability[3] > 0.5)
+//                        if (detecting_siot_at_each_case_probability[4] > 0.5)
+                        {
+                            text_view_whether_letter_or_number_or_noise[image_index].setText("ㅅ");
+                            return;
+                        }
+
+
+
+//        if((float) width / height > 1.3){
+//            int count_dots_of_high_part = 0;
+//            int count_dots_of_low_part = 0;
+//            int index = 0;
+//
+//            for(int y = 0; y < height / 2; y++){
+//                for(int x = 0; x < width; x++){
+//                    index = y * width + x;
+//
+//                    if(pixels_array[index] == black)
+//                        count_dots_of_high_part += 1;
+//                }
+//            }
+//            for(int y = height / 2; y < height; y++){
+//                for(int x = 0; x < width; x++){
+//                    index = y * width + x;
+//
+//                    if(pixels_array[index] == black)
+//                        count_dots_of_low_part += 1;
+//                }
+//            }
+//
+//            if(count_dots_of_high_part > count_dots_of_low_part)
+//                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅜ");
+//            else
+//                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅗ");
+//        }
+//        else{
+//            int count_dots_of_right_part = 0;
+//            int count_dots_of_left_part = 0;
+//            int index = 0;
+//
+//            for(int x = 0; x < width / 2; x++){
+//                for(int y = 0; y < height; y++){
+//                    index = y * width + x;
+//
+//                    if(pixels_array[index] == black)
+//                        count_dots_of_left_part += 1;
+//                }
+//            }
+//            for(int x = width / 2; x < width; x++){
+//                for(int y = 0; y < height; y++){
+//                    index = y * width + x;
+//
+//                    if(pixels_array[index] == black)
+//                        count_dots_of_right_part += 1;
+//                }
+//            }
+//
+//            if(count_dots_of_right_part > count_dots_of_left_part * 13 / 10)
+//                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅓ");
+//            else if(count_dots_of_left_part > count_dots_of_right_part * 13 / 10)
+//                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅏ");
+//            else
+//                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅐ");
+//        }
+//
+//
     }
 }
 
