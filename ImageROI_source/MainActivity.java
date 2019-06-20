@@ -1014,7 +1014,7 @@ public class MainActivity extends Activity
 
 
             if(erase_or_not == 1){
-                each_character_bitmap_array[i] = pseudo_erase_image(each_character_bitmap_array[i]);
+//                each_character_bitmap_array[i] = pseudo_erase_image(each_character_bitmap_array[i]);
                 text_view_whether_letter_or_number_or_noise[i].setText("노이즈");
             }
             else{
