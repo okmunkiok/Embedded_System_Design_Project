@@ -1872,6 +1872,7 @@ public class MainActivity extends Activity
             if(is_left_blocked_rate < 0.2){
                 if(is_top_blocked_rate > 0.8){
                     if(is_bottom_blocked_rate < 0.2){
+//                        detecting ㄱ
                         text_view_whether_letter_or_number_or_noise[image_index].setText("ㄱ");
                         return;
                     }
@@ -2044,7 +2045,7 @@ public class MainActivity extends Activity
 
 
         //        calculate rate for detecting ㅅ
-        int [] detecting_siot_at_each_case = new int[5];
+        int [] detecting_siot_at_each_case = new int[4];
         float[] detecting_siot_at_each_case_probability = new float[detecting_siot_at_each_case.length];
         for (int i = detecting_all_part_left_of_each_height_divided_by_24.length / 2; i < detecting_all_part_left_of_each_height_divided_by_24.length - 1; i++) {
             if (detecting_all_part_left_of_each_height_divided_by_24[i] > detecting_all_part_left_of_each_height_divided_by_24[i + 1])
@@ -2067,76 +2068,171 @@ public class MainActivity extends Activity
         }
         detecting_siot_at_each_case_probability[3] = (float) detecting_siot_at_each_case[3] / (detecting_all_part_bottom_of_each_width_divided_by_24.length / 3 - 1);
 
-        if (detecting_siot_at_each_case_probability[0] > 0.5)
-            if (detecting_siot_at_each_case_probability[1] > 0.5)
-                if (detecting_siot_at_each_case_probability[2] > 0.5)
+        if (detecting_siot_at_each_case_probability[0] > 0.5){
+            if (detecting_siot_at_each_case_probability[1] > 0.5){
+                if (detecting_siot_at_each_case_probability[2] > 0.5){
                     if (detecting_siot_at_each_case_probability[3] > 0.5)
 //                        if (detecting_siot_at_each_case_probability[4] > 0.5)
-                        {
-                            text_view_whether_letter_or_number_or_noise[image_index].setText("ㅅ");
-                            return;
-                        }
+                    {
+                        text_view_whether_letter_or_number_or_noise[image_index].setText("ㅅ");
+                        return;
+                    }
+                }
+                else{
+//                    detecting ㅈ
+                    text_view_whether_letter_or_number_or_noise[image_index].setText("ㅈ");
+                    return;
+                }
+            }
+        }
 
 
 
-//        if((float) width / height > 1.3){
-//            int count_dots_of_high_part = 0;
-//            int count_dots_of_low_part = 0;
-//            int index = 0;
-//
-//            for(int y = 0; y < height / 2; y++){
-//                for(int x = 0; x < width; x++){
-//                    index = y * width + x;
-//
-//                    if(pixels_array[index] == black)
-//                        count_dots_of_high_part += 1;
-//                }
-//            }
-//            for(int y = height / 2; y < height; y++){
-//                for(int x = 0; x < width; x++){
-//                    index = y * width + x;
-//
-//                    if(pixels_array[index] == black)
-//                        count_dots_of_low_part += 1;
-//                }
-//            }
-//
-//            if(count_dots_of_high_part > count_dots_of_low_part)
-//                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅜ");
-//            else
-//                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅗ");
-//        }
-//        else{
-//            int count_dots_of_right_part = 0;
-//            int count_dots_of_left_part = 0;
-//            int index = 0;
-//
-//            for(int x = 0; x < width / 2; x++){
-//                for(int y = 0; y < height; y++){
-//                    index = y * width + x;
-//
-//                    if(pixels_array[index] == black)
-//                        count_dots_of_left_part += 1;
-//                }
-//            }
-//            for(int x = width / 2; x < width; x++){
-//                for(int y = 0; y < height; y++){
-//                    index = y * width + x;
-//
-//                    if(pixels_array[index] == black)
-//                        count_dots_of_right_part += 1;
-//                }
-//            }
-//
-//            if(count_dots_of_right_part > count_dots_of_left_part * 13 / 10)
-//                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅓ");
-//            else if(count_dots_of_left_part > count_dots_of_right_part * 13 / 10)
-//                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅏ");
-//            else
-//                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅐ");
-//        }
-//
-//
+        //        calculate rate for detecting ㅇ
+        int [] detecting_ieung_at_each_case = new int[4];
+        float[] detecting_ieung_at_each_case_probability = new float[detecting_ieung_at_each_case.length];
+        for (int i = 0; i < detecting_all_part_left_of_each_height_divided_by_24.length / 3; i++) {
+            if (detecting_all_part_right_of_each_height_divided_by_24[i + 1] - detecting_all_part_left_of_each_height_divided_by_24[i + 1] > detecting_all_part_right_of_each_height_divided_by_24[i] - detecting_all_part_left_of_each_height_divided_by_24[i])
+                detecting_ieung_at_each_case[0] += 1;
+        }
+        detecting_ieung_at_each_case_probability[0] = (float) detecting_ieung_at_each_case[0] / (detecting_all_part_left_of_each_height_divided_by_24.length / 3);
+        for (int i = detecting_all_part_left_of_each_height_divided_by_24.length * 2 / 3; i < detecting_all_part_left_of_each_height_divided_by_24.length - 1; i++) {
+            if (detecting_all_part_right_of_each_height_divided_by_24[i + 1] - detecting_all_part_left_of_each_height_divided_by_24[i + 1] < detecting_all_part_right_of_each_height_divided_by_24[i] - detecting_all_part_left_of_each_height_divided_by_24[i])
+                detecting_ieung_at_each_case[1] += 1;
+        }
+        detecting_ieung_at_each_case_probability[1] = (float) detecting_ieung_at_each_case[1] / (detecting_all_part_left_of_each_height_divided_by_24.length / 3 - 1);
+        for (int i = 0; i < detecting_all_part_bottom_of_each_width_divided_by_24.length / 3; i++) {
+            if (detecting_all_part_bottom_of_each_width_divided_by_24[i + 1] - detecting_all_part_top_of_each_width_divided_by_24[i + 1] > detecting_all_part_bottom_of_each_width_divided_by_24[i] - detecting_all_part_top_of_each_width_divided_by_24[i])
+                detecting_ieung_at_each_case[2] += 1;
+        }
+        detecting_ieung_at_each_case_probability[2] = (float) detecting_ieung_at_each_case[2] / (detecting_all_part_bottom_of_each_width_divided_by_24.length / 3);
+        for (int i = detecting_all_part_bottom_of_each_width_divided_by_24.length * 2 / 3; i < detecting_all_part_bottom_of_each_width_divided_by_24.length - 1; i++) {
+            if (detecting_all_part_bottom_of_each_width_divided_by_24[i + 1] - detecting_all_part_top_of_each_width_divided_by_24[i + 1] < detecting_all_part_bottom_of_each_width_divided_by_24[i] - detecting_all_part_top_of_each_width_divided_by_24[i])
+                detecting_ieung_at_each_case[3] += 1;
+        }
+        detecting_ieung_at_each_case_probability[3] = (float) detecting_ieung_at_each_case[3] / (detecting_all_part_bottom_of_each_width_divided_by_24.length / 3 - 1);
+
+        if(detecting_ieung_at_each_case_probability[0] > 0.5){
+            if(detecting_ieung_at_each_case_probability[1] > 0.5){
+                if(detecting_ieung_at_each_case_probability[2] > 0.5){
+                    if(detecting_ieung_at_each_case_probability[3] > 0.5){
+                        text_view_whether_letter_or_number_or_noise[image_index].setText("ㅇ");
+                        return;
+                    }
+                }
+            }
+        }
+
+
+
+//        detecting ㅁ
+        if(is_right_blocked_rate > 0.6){
+            if(is_left_blocked_rate > 0.6){
+                if(is_top_blocked_rate > 0.6){
+                    if(is_bottom_blocked_rate > 0.6){
+                        text_view_whether_letter_or_number_or_noise[image_index].setText("ㅁ");
+                        return;
+                    }
+                }
+            }
+        }
+
+
+
+        //        calculate rate for detecting ㅎ
+        int [] detecting_hieut_at_each_case = new int[1];
+        float[] detecting_hieut_at_each_case_probability = new float[detecting_hieut_at_each_case.length];
+        for (int i = detecting_all_part_left_of_each_height_divided_by_24.length * 3 / 4; i < detecting_all_part_left_of_each_height_divided_by_24.length; i++) {
+            if (detecting_all_part_right_of_each_height_divided_by_24[i + 1] - detecting_all_part_left_of_each_height_divided_by_24[i + 1] < detecting_all_part_right_of_each_height_divided_by_24[i] - detecting_all_part_left_of_each_height_divided_by_24[i])
+                detecting_ieung_at_each_case[0] += 1;
+        }
+        detecting_hieut_at_each_case_probability[0] = (float) detecting_hieut_at_each_case[0] / (detecting_all_part_left_of_each_height_divided_by_24.length / 4 - 1);
+
+        if(detecting_hieut_at_each_case_probability[0] > 0.5){
+            text_view_whether_letter_or_number_or_noise[image_index].setText("ㅎ");
+            return;
+        }
+
+
+
+
+//        detecting ㅂ
+        is_right_blocked = 0;
+        is_left_blocked = 0;
+        is_top_blocked = 0;
+        is_bottom_blocked = 0;
+        is_right_blocked_rate = 0;
+        is_left_blocked_rate = 0;
+        is_top_blocked_rate = 0;
+        is_bottom_blocked_rate = 0;
+        for(int y = 0; y < height * 1 / 6; y++){
+            int x = width / 2;
+            int y_temp = y;
+            index = y * width + x;
+
+            if(pixels_array[index] == black)
+                continue;
+
+            for(x = width / 2; x < width; x++){
+                index = y * width + x;
+                if(pixels_array[index] == black){
+                    is_right_blocked += 1;
+                    break;
+                }
+            }
+            for(x = width / 2; x >= 0; x--){
+                index = y * width + x;
+                if(pixels_array[index] == black){
+                    is_left_blocked += 1;
+                    break;
+                }
+            }
+        }
+        is_right_blocked_rate = (float) is_right_blocked / (height / 6);
+        is_left_blocked_rate = (float) is_left_blocked / (height / 6);
+        for(int x = width / 3; x < width * 2 / 3; x++){
+            int y = height / 6;
+            int x_temp = x;
+            index = y * width + x;
+
+            if(pixels_array[index] == black)
+                continue;
+
+            for(y = height / 6; y >= 0; y--){
+                index = y * width + x;
+                if(pixels_array[index] == black){
+                    is_top_blocked += 1;
+                    break;
+                }
+            }
+            for(y = height / 6; y < height; y++){
+                index = y * width + x;
+                if(pixels_array[index] == black){
+                    is_bottom_blocked += 1;
+                    break;
+                }
+            }
+        }
+        is_top_blocked_rate = (float) is_top_blocked / (width / 3);
+        is_bottom_blocked_rate = (float) is_bottom_blocked / (width / 3);
+
+
+        if(is_right_blocked_rate > 0.6){
+            if(is_left_blocked_rate > 0.6){
+                if(is_bottom_blocked_rate > 0.6){
+                    text_view_whether_letter_or_number_or_noise[image_index].setText("ㅂ");
+                    return;
+                }
+            }
+        }
+
+
+
+//        detecting ㄹ
+        text_view_whether_letter_or_number_or_noise[image_index].setText("ㄹ");
+        return;
+
+
     }
 }
 
