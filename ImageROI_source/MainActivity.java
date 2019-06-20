@@ -5,25 +5,25 @@ package com.hbe.imageroi;
 // Eclipse
 
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+        import java.io.File;
+        import java.io.FileOutputStream;
+        import java.io.InputStream;
 
-import android.content.pm.PackageManager;
-import android.widget.TextView;
-import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Toast;
-import java.lang.Math;
+        import android.content.pm.PackageManager;
+        import android.widget.TextView;
+        import android.app.Activity;
+        import android.content.Intent;
+        import android.graphics.Bitmap;
+        import android.graphics.BitmapFactory;
+        import android.graphics.Matrix;
+        import android.net.Uri;
+        import android.os.Bundle;
+        import android.os.Environment;
+        import android.view.View;
+        import android.widget.Button;
+        import android.widget.ImageView;
+        import android.widget.Toast;
+        import java.lang.Math;
 
 
 public class MainActivity extends Activity
@@ -1053,7 +1053,7 @@ public class MainActivity extends Activity
     }
 
 
-//    source: http://www.masterqna.com/android/81347/%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-app-%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%97%90-%EB%8C%80%ED%95%B4-%EC%A7%88%EB%AC%B8%EB%93%9C%EB%A6%BD%EB%8B%88%EB%8B%A4
+    //    source: http://www.masterqna.com/android/81347/%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-app-%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%97%90-%EB%8C%80%ED%95%B4-%EC%A7%88%EB%AC%B8%EB%93%9C%EB%A6%BD%EB%8B%88%EB%8B%A4
     public void restart(){
 
         Intent i = getBaseContext().getPackageManager().
@@ -1448,11 +1448,11 @@ public class MainActivity extends Activity
         if (detecting_8_at_each_case_x_rate[0] > 0.5)
             if (detecting_8_at_each_case_x_rate[1] > 0.5)
 //                if (detecting_8_at_each_case_x_rate[2] > 0.5)
-                    if (detecting_8_at_each_case_x_rate[3] > 0.5)
-                    {
-                        text_view_whether_letter_or_number_or_noise[image_index].setText("8");
-                        return;
-                    }
+                if (detecting_8_at_each_case_x_rate[3] > 0.5)
+                {
+                    text_view_whether_letter_or_number_or_noise[image_index].setText("8");
+                    return;
+                }
 
 
         //        calculate rate for detecting 2
@@ -1722,8 +1722,8 @@ public class MainActivity extends Activity
 //
 //        if (detecting_3_at_each_case_probability[0] > 0.5)
 //        {
-            text_view_whether_letter_or_number_or_noise[image_index].setText("5");
-            return;
+        text_view_whether_letter_or_number_or_noise[image_index].setText("5");
+        return;
 //        }
 
 
