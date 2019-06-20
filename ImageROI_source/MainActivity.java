@@ -5,25 +5,25 @@ package com.hbe.imageroi;
 // Eclipse
 
 
-        import java.io.File;
-        import java.io.FileOutputStream;
-        import java.io.InputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
-        import android.content.pm.PackageManager;
-        import android.widget.TextView;
-        import android.app.Activity;
-        import android.content.Intent;
-        import android.graphics.Bitmap;
-        import android.graphics.BitmapFactory;
-        import android.graphics.Matrix;
-        import android.net.Uri;
-        import android.os.Bundle;
-        import android.os.Environment;
-        import android.view.View;
-        import android.widget.Button;
-        import android.widget.ImageView;
-        import android.widget.Toast;
-        import java.lang.Math;
+import android.content.pm.PackageManager;
+import android.widget.TextView;
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
+import java.lang.Math;
 
 
 public class MainActivity extends Activity
@@ -148,15 +148,22 @@ public class MainActivity extends Activity
 
                     if(is_alphabet_combined_or_not == 0){
                         for(int i = 0; index_of_letter_and_number[i] != 0; i++){
-                            if(i == 2 || i == 3)
+                            if(i == 2){
                                 continue;
+                            }
+                            else if(i == 3){
+                                distinguish_vowels(each_character_bitmap_array[index_of_letter_and_number[i]], index_of_letter_and_number[i]);
+                                continue;
+                            }
                             distinguish_numbers(each_character_bitmap_array[index_of_letter_and_number[i]], index_of_letter_and_number[i]);
                         }
                     }
                     else if(is_alphabet_combined_or_not == 1){
                         for(int i = 0; index_of_letter_and_number[i] != 0; i++){
-                            if(i == 2)
+                            if(i == 2){
+
                                 continue;
+                            }
                             distinguish_numbers(each_character_bitmap_array[index_of_letter_and_number[i]], index_of_letter_and_number[i]);
                         }
                     }
@@ -1105,21 +1112,10 @@ public class MainActivity extends Activity
         int[] detecting_1_at_each_case_count_y_symmetric_of_top_and_bottom = new int[1];
 
         int[] detecting_2_at_each_case_count_x_of_left_and_right = new int[3];
-        int[] detecting_2_high_part_left_of_each_height_divided_by_24 = new int[2];
-        int[] detecting_2_high_part_right_of_each_height_divided_by_24 = new int[detecting_2_high_part_left_of_each_height_divided_by_24.length];
-        int[] detecting_2_middle_part_left_of_each_height_divided_by_24 = new int[7];
-        int[] detecting_2_middle_part_right_of_each_height_divided_by_24 = new int[detecting_2_middle_part_left_of_each_height_divided_by_24.length];
-        int[] detecting_2_all_part_left_of_each_height_divided_by_24 = new int[24];
-        int[] detecting_2_all_part_right_of_each_height_divided_by_24 = new int[detecting_2_all_part_left_of_each_height_divided_by_24.length];
 
         int[] detecting_3_at_each_case = new int[2];
 
         int[] detecting_4_at_each_case_count_x_of_left_and_right = new int[8];
-        int[] detecting_4_high_part_left_of_each_height_divided_by_24 = new int[18];
-        int[] detecting_4_high_part_right_of_each_height_divided_by_24 = new int[detecting_4_high_part_left_of_each_height_divided_by_24.length];
-//        int[] detecting_4_high_part_left_2_of_each_height_divided_by_24 = new int[18];
-//        int[] detecting_4_middle_part_left_of_each_height_divided_by_24 = new int[7];
-//        int[] detecting_4_middle_part_right_of_each_height_divided_by_24 = new int[detecting_4_middle_part_left_of_each_height_divided_by_24.length];
 
         int[] detecting_6_at_each_case_count_x_of_left_and_right = new int[2];
         int[] detecting_6_high_part_left_of_each_height_divided_by_24 = new int[5];
@@ -1149,8 +1145,6 @@ public class MainActivity extends Activity
 
 
         int[] detecting_9_at_each_case_count_x_of_left_and_right = new int[3];
-        int[] detecting_9_all_part_left_of_each_height_divided_by_24 = new int[24];
-        int[] detecting_9_all_part_right_of_each_height_divided_by_24 = new int[detecting_9_all_part_left_of_each_height_divided_by_24.length];
 
 
 
@@ -1230,44 +1224,6 @@ public class MainActivity extends Activity
 
 
 
-//                detecting 2
-                for (int j = 0; j < detecting_2_high_part_left_of_each_height_divided_by_24.length; j++) {
-                    if (y == height_divided_by_24[j]) {
-                        detecting_2_high_part_left_of_each_height_divided_by_24[j] = left[0];
-                        detecting_2_high_part_right_of_each_height_divided_by_24[j] = right[0];
-                    }
-                }
-                for (int j = 0; j < detecting_2_middle_part_left_of_each_height_divided_by_24.length; j++) {
-                    if (y == height_divided_by_24[7 + j]) {
-                        detecting_2_middle_part_left_of_each_height_divided_by_24[j] = left[0];
-                        detecting_2_middle_part_right_of_each_height_divided_by_24[j] = right[0];
-                    }
-                }
-                for(int j = 0; j < detecting_2_all_part_left_of_each_height_divided_by_24.length; j++){
-                    if(y == height_divided_by_24[j]){
-                        detecting_2_all_part_left_of_each_height_divided_by_24[j] = left[0];
-                        detecting_2_all_part_right_of_each_height_divided_by_24[j] = right[0];
-                    }
-                }
-
-
-
-
-//                detecting 4
-                for (int j = 0; j < detecting_4_high_part_left_of_each_height_divided_by_24.length; j++) {
-                    if (y == height_divided_by_24[j]) {
-                        detecting_4_high_part_left_of_each_height_divided_by_24[j] = left[0];
-                        detecting_4_high_part_right_of_each_height_divided_by_24[j] = right[0];
-                    }
-                }
-//                for(int j = 0; j < detecting_4_high_part_left_2_of_each_height_divided_by_24.length; j++){
-//                    if(y == height_divided_by_24[j]){
-//                        detecting_4_high_part_left_2_of_each_height_divided_by_24[j] = left[0];
-//                    }
-//                }
-
-
-
 //                detecting 6
                 for (int j = 0; j < detecting_6_high_part_left_of_each_height_divided_by_24.length; j++) {
                     if (y == height_divided_by_24[j]) {
@@ -1292,16 +1248,9 @@ public class MainActivity extends Activity
                 }
 
 
-//                detecting 9
-                for(int j = 0; j < detecting_9_all_part_left_of_each_height_divided_by_24.length; j++){
-                    if(y == height_divided_by_24[j]){
-                        detecting_9_all_part_left_of_each_height_divided_by_24[j] = left[0];
-                        detecting_9_all_part_right_of_each_height_divided_by_24[j] = right[0];
-                    }
-                }
 
 
-//                detecting for 0 ~ 9
+//                detecting left and right
                 for(int j = 0; j < detecting_all_part_left_of_each_height_divided_by_24.length; j++){
                     if(y == height_divided_by_24[j]){
                         detecting_all_part_left_of_each_height_divided_by_24[j] = left[0];
@@ -1444,7 +1393,6 @@ public class MainActivity extends Activity
         }
         detecting_8_at_each_case_x_rate[3] = (float) detecting_8_at_each_case_count_x_of_left_and_right[3] / (detecting_all_part_left_of_each_height_divided_by_24.length / 4 - 1);
 
-
         if (detecting_8_at_each_case_x_rate[0] > 0.5)
             if (detecting_8_at_each_case_x_rate[1] > 0.5)
 //                if (detecting_8_at_each_case_x_rate[2] > 0.5)
@@ -1457,22 +1405,21 @@ public class MainActivity extends Activity
 
         //        calculate rate for detecting 2
         float[] detecting_2_at_each_case_x_rate = new float[detecting_2_at_each_case_count_x_of_left_and_right.length];
-        for (int i = 0; i < detecting_2_high_part_left_of_each_height_divided_by_24.length - 1; i++) {
-            if ((detecting_2_high_part_left_of_each_height_divided_by_24[i] > detecting_2_high_part_left_of_each_height_divided_by_24[i + 1]) && (detecting_2_high_part_right_of_each_height_divided_by_24[i] < detecting_2_high_part_right_of_each_height_divided_by_24[i + 1]))
+        for (int i = 0; i < detecting_all_part_left_of_each_height_divided_by_24.length * 1 / 12 - 1; i++) {
+            if ((detecting_all_part_left_of_each_height_divided_by_24[i] > detecting_all_part_left_of_each_height_divided_by_24[i + 1]) && (detecting_all_part_right_of_each_height_divided_by_24[i] < detecting_all_part_right_of_each_height_divided_by_24[i + 1]))
                 detecting_2_at_each_case_count_x_of_left_and_right[0] += 1;
         }
-        detecting_2_at_each_case_x_rate[0] = (float) detecting_2_at_each_case_count_x_of_left_and_right[0] / (detecting_2_high_part_left_of_each_height_divided_by_24.length - 1);
-        for (int i = 0; i < detecting_2_middle_part_left_of_each_height_divided_by_24.length - 1; i++) {
-            if ((detecting_2_middle_part_left_of_each_height_divided_by_24[i] > detecting_2_middle_part_left_of_each_height_divided_by_24[i + 1]) && (detecting_2_middle_part_right_of_each_height_divided_by_24[i] > detecting_2_middle_part_right_of_each_height_divided_by_24[i + 1]))
+        detecting_2_at_each_case_x_rate[0] = (float) detecting_2_at_each_case_count_x_of_left_and_right[0] / (detecting_all_part_left_of_each_height_divided_by_24.length * 1 / 12 - 1);
+        for (int i = detecting_all_part_left_of_each_height_divided_by_24.length * 1 / 3; i < detecting_all_part_left_of_each_height_divided_by_24.length * 2 / 3; i++) {
+            if ((detecting_all_part_left_of_each_height_divided_by_24[i] > detecting_all_part_left_of_each_height_divided_by_24[i + 1]) && (detecting_all_part_right_of_each_height_divided_by_24[i] > detecting_all_part_right_of_each_height_divided_by_24[i + 1]))
                 detecting_2_at_each_case_count_x_of_left_and_right[1] += 1;
         }
-        detecting_2_at_each_case_x_rate[1] = (float) detecting_2_at_each_case_count_x_of_left_and_right[1] / (detecting_2_middle_part_left_of_each_height_divided_by_24.length - 1);
-        for(int i = detecting_2_all_part_left_of_each_height_divided_by_24.length / 3; i < detecting_2_all_part_left_of_each_height_divided_by_24.length * 2 / 3; i++){
-            if(detecting_2_all_part_right_of_each_height_divided_by_24[i] - detecting_2_all_part_left_of_each_height_divided_by_24[i] < detecting_2_all_part_right_of_each_height_divided_by_24[detecting_2_all_part_left_of_each_height_divided_by_24.length - 3] - detecting_2_all_part_left_of_each_height_divided_by_24[detecting_2_all_part_left_of_each_height_divided_by_24.length - 3])
+        detecting_2_at_each_case_x_rate[1] = (float) detecting_2_at_each_case_count_x_of_left_and_right[1] / (detecting_all_part_left_of_each_height_divided_by_24.length * 1 / 3);
+        for (int i = detecting_all_part_left_of_each_height_divided_by_24.length * 1 / 3; i < detecting_all_part_left_of_each_height_divided_by_24.length * 2 / 3; i++) {
+            if ((detecting_all_part_right_of_each_height_divided_by_24[i] - detecting_all_part_left_of_each_height_divided_by_24[i]) < (detecting_all_part_right_of_each_height_divided_by_24[detecting_all_part_left_of_each_height_divided_by_24.length - 3] - detecting_all_part_left_of_each_height_divided_by_24[detecting_all_part_left_of_each_height_divided_by_24.length - 3]))
                 detecting_2_at_each_case_count_x_of_left_and_right[2] += 1;
         }
-        detecting_2_at_each_case_x_rate[2] = (float) detecting_2_at_each_case_count_x_of_left_and_right[2] / (detecting_2_all_part_left_of_each_height_divided_by_24.length * 1 / 3);
-
+        detecting_2_at_each_case_x_rate[2] = (float) detecting_2_at_each_case_count_x_of_left_and_right[2] / (detecting_all_part_left_of_each_height_divided_by_24.length * 1 / 3);
 
         if (detecting_2_at_each_case_x_rate[0] > 0.5)
             if (detecting_2_at_each_case_x_rate[1] > 0.5)
@@ -1486,22 +1433,21 @@ public class MainActivity extends Activity
 
         //        calculate rate for detecting 9
         float[] detecting_9_at_each_case_x_rate = new float[detecting_9_at_each_case_count_x_of_left_and_right.length];
-        for (int i = 0; i < detecting_9_all_part_left_of_each_height_divided_by_24.length / 5; i++) {
-            if ((detecting_9_all_part_right_of_each_height_divided_by_24[i + 1] - detecting_9_all_part_left_of_each_height_divided_by_24[i + 1]) > (detecting_9_all_part_right_of_each_height_divided_by_24[i] - detecting_9_all_part_left_of_each_height_divided_by_24[i]))
+        for (int i = 0; i < detecting_all_part_left_of_each_height_divided_by_24.length / 5; i++) {
+            if ((detecting_all_part_right_of_each_height_divided_by_24[i + 1] - detecting_all_part_left_of_each_height_divided_by_24[i + 1]) > (detecting_all_part_right_of_each_height_divided_by_24[i] - detecting_all_part_left_of_each_height_divided_by_24[i]))
                 detecting_9_at_each_case_count_x_of_left_and_right[0] += 1;
         }
-        detecting_9_at_each_case_x_rate[0] = (float) detecting_9_at_each_case_count_x_of_left_and_right[0] / (detecting_9_all_part_left_of_each_height_divided_by_24.length / 5);
-        for (int i = detecting_9_all_part_left_of_each_height_divided_by_24.length / 3; i < detecting_9_all_part_left_of_each_height_divided_by_24.length / 2; i++) {
-            if ((detecting_9_all_part_right_of_each_height_divided_by_24[i + 1] - detecting_9_all_part_left_of_each_height_divided_by_24[i + 1]) < (detecting_9_all_part_right_of_each_height_divided_by_24[i] - detecting_9_all_part_left_of_each_height_divided_by_24[i]))
+        detecting_9_at_each_case_x_rate[0] = (float) detecting_9_at_each_case_count_x_of_left_and_right[0] / (detecting_all_part_left_of_each_height_divided_by_24.length / 5);
+        for (int i = detecting_all_part_left_of_each_height_divided_by_24.length / 3; i < detecting_all_part_left_of_each_height_divided_by_24.length / 2; i++) {
+            if ((detecting_all_part_right_of_each_height_divided_by_24[i + 1] - detecting_all_part_left_of_each_height_divided_by_24[i + 1]) < (detecting_all_part_right_of_each_height_divided_by_24[i] - detecting_all_part_left_of_each_height_divided_by_24[i]))
                 detecting_9_at_each_case_count_x_of_left_and_right[1] += 1;
         }
-        detecting_9_at_each_case_x_rate[1] = (float) detecting_9_at_each_case_count_x_of_left_and_right[1] / (detecting_9_all_part_left_of_each_height_divided_by_24.length / 6);
-        for (int i = detecting_9_all_part_left_of_each_height_divided_by_24.length * 3 / 4; i < detecting_9_all_part_left_of_each_height_divided_by_24.length - 1; i++) {
-            if ((detecting_9_all_part_right_of_each_height_divided_by_24[i] - detecting_9_all_part_right_of_each_height_divided_by_24[i + 1] > 0) && (detecting_9_all_part_left_of_each_height_divided_by_24[i] - detecting_9_all_part_left_of_each_height_divided_by_24[i + 1] > 0))
+        detecting_9_at_each_case_x_rate[1] = (float) detecting_9_at_each_case_count_x_of_left_and_right[1] / (detecting_all_part_left_of_each_height_divided_by_24.length / 6);
+        for (int i = detecting_all_part_left_of_each_height_divided_by_24.length * 3 / 4; i < detecting_all_part_left_of_each_height_divided_by_24.length - 1; i++) {
+            if ((detecting_all_part_right_of_each_height_divided_by_24[i] - detecting_all_part_right_of_each_height_divided_by_24[i + 1] > 0) && (detecting_all_part_left_of_each_height_divided_by_24[i] - detecting_all_part_left_of_each_height_divided_by_24[i + 1] > 0))
                 detecting_9_at_each_case_count_x_of_left_and_right[2] += 1;
         }
-        detecting_9_at_each_case_x_rate[2] = (float) detecting_9_at_each_case_count_x_of_left_and_right[2] / (detecting_9_all_part_left_of_each_height_divided_by_24.length * 1 / 4 - 1);
-
+        detecting_9_at_each_case_x_rate[2] = (float) detecting_9_at_each_case_count_x_of_left_and_right[2] / (detecting_all_part_left_of_each_height_divided_by_24.length * 1 / 4 - 1);
 
         if (detecting_9_at_each_case_x_rate[0] > 0.5)
             if (detecting_9_at_each_case_x_rate[1] > 0.5)
@@ -1513,60 +1459,49 @@ public class MainActivity extends Activity
 
 
 
-
-
-
-
-
-
-
-
-
-
-
         //        calculate rate for detecting 4
         float[] detecting_4_at_each_case_x_rate = new float[detecting_4_at_each_case_count_x_of_left_and_right.length];
-        for (int i = 0; i < detecting_4_high_part_left_of_each_height_divided_by_24.length / 3; i++) {
-            if ((detecting_4_high_part_left_of_each_height_divided_by_24[i] > detecting_4_high_part_left_of_each_height_divided_by_24[i + 1]))
+        for (int i = 0; i < detecting_all_part_left_of_each_height_divided_by_24.length / 4; i++) {
+            if ((detecting_all_part_left_of_each_height_divided_by_24[i] > detecting_all_part_left_of_each_height_divided_by_24[i + 1]))
                 detecting_4_at_each_case_count_x_of_left_and_right[0] += 1;
         }
-        detecting_4_at_each_case_x_rate[0] = (float) detecting_4_at_each_case_count_x_of_left_and_right[0] / (detecting_4_high_part_left_of_each_height_divided_by_24.length / 3);
-        for (int i = detecting_4_high_part_left_of_each_height_divided_by_24.length / 3; i < detecting_4_high_part_left_of_each_height_divided_by_24.length * 2 / 3; i++) {
-            if ((detecting_4_high_part_left_of_each_height_divided_by_24[i] > detecting_4_high_part_left_of_each_height_divided_by_24[i + 1]))
+        detecting_4_at_each_case_x_rate[0] = (float) detecting_4_at_each_case_count_x_of_left_and_right[0] / (detecting_all_part_left_of_each_height_divided_by_24.length / 4);
+        for (int i = detecting_all_part_left_of_each_height_divided_by_24.length / 4; i < detecting_all_part_left_of_each_height_divided_by_24.length * 2 / 4; i++) {
+            if ((detecting_all_part_left_of_each_height_divided_by_24[i] > detecting_all_part_left_of_each_height_divided_by_24[i + 1]))
                 detecting_4_at_each_case_count_x_of_left_and_right[1] += 1;
         }
-        detecting_4_at_each_case_x_rate[1] = (float) detecting_4_at_each_case_count_x_of_left_and_right[1] / (detecting_4_high_part_left_of_each_height_divided_by_24.length / 3);
-        for(int i = detecting_4_high_part_left_of_each_height_divided_by_24.length * 2 / 3; i < detecting_4_high_part_left_of_each_height_divided_by_24.length - 1; i++){
-            if ((detecting_4_high_part_left_of_each_height_divided_by_24[i] > detecting_4_high_part_left_of_each_height_divided_by_24[i + 1]))
+        detecting_4_at_each_case_x_rate[1] = (float) detecting_4_at_each_case_count_x_of_left_and_right[1] / (detecting_all_part_left_of_each_height_divided_by_24.length / 4);
+        for(int i = detecting_all_part_left_of_each_height_divided_by_24.length * 2 / 4; i < detecting_all_part_left_of_each_height_divided_by_24.length * 3 / 4; i++){
+            if ((detecting_all_part_left_of_each_height_divided_by_24[i] > detecting_all_part_left_of_each_height_divided_by_24[i + 1]))
                 detecting_4_at_each_case_count_x_of_left_and_right[2] += 1;
         }
-        detecting_4_at_each_case_x_rate[2] = (float) detecting_4_at_each_case_count_x_of_left_and_right[2] / (detecting_4_high_part_left_of_each_height_divided_by_24.length / 3 - 1);
-        for(int i = 0; i < detecting_4_high_part_left_of_each_height_divided_by_24.length - 1; i++){
-            if ((detecting_4_high_part_left_of_each_height_divided_by_24[i] > detecting_4_high_part_left_of_each_height_divided_by_24[i + 1]))
+        detecting_4_at_each_case_x_rate[2] = (float) detecting_4_at_each_case_count_x_of_left_and_right[2] / (detecting_all_part_left_of_each_height_divided_by_24.length / 4);
+        for(int i = 0; i < detecting_all_part_left_of_each_height_divided_by_24.length * 3 / 4; i++){
+            if ((detecting_all_part_left_of_each_height_divided_by_24[i] > detecting_all_part_left_of_each_height_divided_by_24[i + 1]))
                 detecting_4_at_each_case_count_x_of_left_and_right[3] += 1;
         }
-        detecting_4_at_each_case_x_rate[3] = (float) detecting_4_at_each_case_count_x_of_left_and_right[3] / (detecting_4_high_part_left_of_each_height_divided_by_24.length - 1);
+        detecting_4_at_each_case_x_rate[3] = (float) detecting_4_at_each_case_count_x_of_left_and_right[3] / (detecting_all_part_left_of_each_height_divided_by_24.length * 3 / 4);
 
-        for (int i = 0; i < detecting_4_high_part_left_of_each_height_divided_by_24.length / 3; i++) {
-            if ((detecting_4_high_part_right_of_each_height_divided_by_24[i + 1] - detecting_4_high_part_left_of_each_height_divided_by_24[i + 1]) > (detecting_4_high_part_right_of_each_height_divided_by_24[i] - detecting_4_high_part_left_of_each_height_divided_by_24[i]))
+        for (int i = 0; i < detecting_all_part_left_of_each_height_divided_by_24.length / 4; i++) {
+            if ((detecting_all_part_right_of_each_height_divided_by_24[i + 1] - detecting_all_part_left_of_each_height_divided_by_24[i + 1]) > (detecting_all_part_right_of_each_height_divided_by_24[i] - detecting_all_part_left_of_each_height_divided_by_24[i]))
                 detecting_4_at_each_case_count_x_of_left_and_right[4] += 1;
         }
-        detecting_4_at_each_case_x_rate[4] = (float) detecting_4_at_each_case_count_x_of_left_and_right[4] / (detecting_4_high_part_left_of_each_height_divided_by_24.length / 3);
-        for (int i = detecting_4_high_part_left_of_each_height_divided_by_24.length / 3; i < detecting_4_high_part_left_of_each_height_divided_by_24.length * 2 / 3; i++) {
-            if ((detecting_4_high_part_right_of_each_height_divided_by_24[i + 1] - detecting_4_high_part_left_of_each_height_divided_by_24[i + 1]) > (detecting_4_high_part_right_of_each_height_divided_by_24[i] - detecting_4_high_part_left_of_each_height_divided_by_24[i]))
+        detecting_4_at_each_case_x_rate[4] = (float) detecting_4_at_each_case_count_x_of_left_and_right[4] / (detecting_all_part_left_of_each_height_divided_by_24.length / 4);
+        for (int i = detecting_all_part_left_of_each_height_divided_by_24.length / 4; i < detecting_all_part_left_of_each_height_divided_by_24.length * 2 / 4; i++) {
+            if ((detecting_all_part_right_of_each_height_divided_by_24[i + 1] - detecting_all_part_left_of_each_height_divided_by_24[i + 1]) > (detecting_all_part_right_of_each_height_divided_by_24[i] - detecting_all_part_left_of_each_height_divided_by_24[i]))
                 detecting_4_at_each_case_count_x_of_left_and_right[5] += 1;
         }
-        detecting_4_at_each_case_x_rate[5] = (float) detecting_4_at_each_case_count_x_of_left_and_right[5] / (detecting_4_high_part_left_of_each_height_divided_by_24.length / 3);
-        for(int i = detecting_4_high_part_left_of_each_height_divided_by_24.length * 2 / 3; i < detecting_4_high_part_left_of_each_height_divided_by_24.length - 1; i++){
-            if ((detecting_4_high_part_right_of_each_height_divided_by_24[i + 1] - detecting_4_high_part_left_of_each_height_divided_by_24[i + 1]) > (detecting_4_high_part_right_of_each_height_divided_by_24[i] - detecting_4_high_part_left_of_each_height_divided_by_24[i]))
+        detecting_4_at_each_case_x_rate[5] = (float) detecting_4_at_each_case_count_x_of_left_and_right[5] / (detecting_all_part_left_of_each_height_divided_by_24.length / 4);
+        for(int i = detecting_all_part_left_of_each_height_divided_by_24.length * 2 / 4; i < detecting_all_part_left_of_each_height_divided_by_24.length * 3 / 4; i++){
+            if ((detecting_all_part_right_of_each_height_divided_by_24[i + 1] - detecting_all_part_left_of_each_height_divided_by_24[i + 1]) > (detecting_all_part_right_of_each_height_divided_by_24[i] - detecting_all_part_left_of_each_height_divided_by_24[i]))
                 detecting_4_at_each_case_count_x_of_left_and_right[6] += 1;
         }
-        detecting_4_at_each_case_x_rate[6] = (float) detecting_4_at_each_case_count_x_of_left_and_right[6] / (detecting_4_high_part_left_of_each_height_divided_by_24.length / 3 - 1);
-        for(int i = 0; i < detecting_4_high_part_left_of_each_height_divided_by_24.length - 1; i++){
-            if ((detecting_4_high_part_right_of_each_height_divided_by_24[i + 1] - detecting_4_high_part_left_of_each_height_divided_by_24[i + 1]) > (detecting_4_high_part_right_of_each_height_divided_by_24[i] - detecting_4_high_part_left_of_each_height_divided_by_24[i]))
+        detecting_4_at_each_case_x_rate[6] = (float) detecting_4_at_each_case_count_x_of_left_and_right[6] / (detecting_all_part_left_of_each_height_divided_by_24.length / 4);
+        for(int i = 0; i < detecting_all_part_left_of_each_height_divided_by_24.length * 3 / 4; i++){
+            if ((detecting_all_part_right_of_each_height_divided_by_24[i + 1] - detecting_all_part_left_of_each_height_divided_by_24[i + 1]) > (detecting_all_part_right_of_each_height_divided_by_24[i] - detecting_all_part_left_of_each_height_divided_by_24[i]))
                 detecting_4_at_each_case_count_x_of_left_and_right[7] += 1;
         }
-        detecting_4_at_each_case_x_rate[7] = (float) detecting_4_at_each_case_count_x_of_left_and_right[7] / (detecting_4_high_part_left_of_each_height_divided_by_24.length - 1);
+        detecting_4_at_each_case_x_rate[7] = (float) detecting_4_at_each_case_count_x_of_left_and_right[7] / (detecting_all_part_right_of_each_height_divided_by_24.length * 3 / 4);
 
 
         if (detecting_4_at_each_case_x_rate[0] > 0.5)
@@ -1749,6 +1684,79 @@ public class MainActivity extends Activity
 //        text_view_whether_letter_or_number_or_noise[image_index].setText(Float.toString((float) count_y_symmetric_of_left_and_right / width));
 //        text_view_whether_letter_or_number_or_noise[image_index].setText(Integer.toString(count_x_symmetric_of_left_and_right));
 //        text_view_whether_letter_or_number_or_noise[image_index].setText(Integer.toString(count_y_symmetric_of_left_and_right));
+    }
+
+
+
+    public void distinguish_vowels (final Bitmap before_bitmap_image, int image_index){
+
+        int black = 0xff000000;
+        int width = before_bitmap_image.getWidth();
+        int height = before_bitmap_image.getHeight();
+
+        int[] pixels_array = new int[width * height];
+        Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+
+        before_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
+
+        if((float) width / height > 1.3){
+            int count_dots_of_high_part = 0;
+            int count_dots_of_low_part = 0;
+            int index = 0;
+
+            for(int y = 0; y < height / 2; y++){
+                for(int x = 0; x < width; x++){
+                    index = y * width + x;
+
+                    if(pixels_array[index] == black)
+                        count_dots_of_high_part += 1;
+                }
+            }
+            for(int y = height / 2; y < height; y++){
+                for(int x = 0; x < width; x++){
+                    index = y * width + x;
+
+                    if(pixels_array[index] == black)
+                        count_dots_of_low_part += 1;
+                }
+            }
+
+            if(count_dots_of_high_part > count_dots_of_low_part)
+                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅜ");
+            else
+                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅗ");
+        }
+        else{
+            int count_dots_of_right_part = 0;
+            int count_dots_of_left_part = 0;
+            int index = 0;
+
+            for(int x = 0; x < width / 2; x++){
+                for(int y = 0; y < height; y++){
+                    index = y * width + x;
+
+                    if(pixels_array[index] == black)
+                        count_dots_of_left_part += 1;
+                }
+            }
+            for(int x = width / 2; x < width; x++){
+                for(int y = 0; y < height; y++){
+                    index = y * width + x;
+
+                    if(pixels_array[index] == black)
+                        count_dots_of_right_part += 1;
+                }
+            }
+
+            if(count_dots_of_right_part > count_dots_of_left_part * 13 / 10)
+                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅓ");
+            else if(count_dots_of_left_part > count_dots_of_right_part * 13 / 10)
+                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅏ");
+            else
+                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅐ");
+        }
+
+
     }
 }
 
