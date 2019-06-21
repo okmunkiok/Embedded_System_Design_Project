@@ -49,7 +49,7 @@ public class MainActivity extends Activity
     Bitmap bitmap_for_actual_processing; // for actual processing
 
     int height_index_of_number_area = 0;
-    int afford_of_height_index_of_number_area = 4;
+    int afford_of_height_index_of_number_area = 8;
     int height_of_number_area = 0;
     int x_min = 99999999;
     int y_min = 99999999;
@@ -115,6 +115,7 @@ public class MainActivity extends Activity
                 else if (v==button2) {
                     bitmap2 = resize_samplesize(bitmap1, 3);
                     bitmap_temp = resize_samplesize(bitmap1, 3);
+                    bitmap_temp_2 = resize_samplesize(bitmap1, 3);
 
                     bitmap2 = gray_scaling(bitmap2);
                     bitmap2 = binarization(bitmap2);
@@ -136,7 +137,15 @@ public class MainActivity extends Activity
 //					filter_width = 5;
 //					bitmap_temp = erosion(bitmap_temp, filter_width);
 
-                    bitmap_temp = get_image_of_height_number_area(bitmap_temp);
+                    bitmap_temp = get_image_of_height_number_area(bitmap_temp_2);
+
+
+                    bitmap_temp = binarization(bitmap_temp);
+                    filter_width = 5;
+                    bitmap_temp = gaussian_filtering(bitmap_temp, filter_width);
+                    bitmap_temp = binarization(bitmap_temp);
+
+
                     bitmap_temp = get_rid_of_border_whose_width_is_1_pixel(bitmap_temp);
 
                     find_letter_candidate_from_left_to_right(bitmap_temp);
@@ -162,7 +171,7 @@ public class MainActivity extends Activity
                     else if(is_alphabet_combined_or_not == 1){
                         for(int i = 0; index_of_letter_and_number[i] != 0; i++){
                             if(i == 2){
-
+                                distinguish_combined_alphabets(each_character_bitmap_array[index_of_letter_and_number[i]], index_of_letter_and_number[i]);
                                 continue;
                             }
                             distinguish_numbers(each_character_bitmap_array[index_of_letter_and_number[i]], index_of_letter_and_number[i]);
@@ -211,8 +220,7 @@ public class MainActivity extends Activity
         button4.setOnClickListener(listener);
     }
 
-    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         if (requestCode == 1) {
             // Make sure the request was successful
@@ -231,9 +239,6 @@ public class MainActivity extends Activity
             }
         }
     }
-
-
-
     //// 이미지 resize by ratio, 출처: https://it77.tistory.com/99
     private Bitmap resize_samplesize (Bitmap original, int samplesize) {
 
@@ -241,8 +246,6 @@ public class MainActivity extends Activity
 
         return resized;
     }
-
-
     public Bitmap gray_scaling(final Bitmap before_binarization_bitmap_image){
         int threshold = 150 * 100;
 
@@ -278,8 +281,6 @@ public class MainActivity extends Activity
 
         return bitmap_sketch_book;
     }
-
-
     public Bitmap binarization(final Bitmap before_binarization_bitmap_image){
         int threshold = 150 * 100;
 
@@ -318,8 +319,6 @@ public class MainActivity extends Activity
 
         return bitmap_sketch_book;
     }
-
-
     public Bitmap pad (final Bitmap before_padding_bitmap_image, int[] pixels_array, Bitmap bitmap_sketch_book, int pad_width){
         int width = before_padding_bitmap_image.getWidth();
         int height = before_padding_bitmap_image.getHeight();
@@ -357,8 +356,6 @@ public class MainActivity extends Activity
 
         return bitmap_sketch_book;
     }
-
-
     public Bitmap dilation (final Bitmap before_dilation_bitmap_image, int dilation_width){
 
 
@@ -417,7 +414,6 @@ public class MainActivity extends Activity
 
         return bitmap_sketch_book;
     }
-
     public Bitmap erosion (final Bitmap before_erosion_bitmap_image, int erosion_width){
 
 
@@ -481,7 +477,6 @@ public class MainActivity extends Activity
 
         return bitmap_sketch_book;
     }
-
     public Bitmap hit_or_miss_transfrom (final Bitmap before_hit_or_miss_transform_bitmap_image, int[] pixels_array, Bitmap bitmap_sketch_book, int hit_or_miss_transform_width){
         int width = before_hit_or_miss_transform_bitmap_image.getWidth();
         int height = before_hit_or_miss_transform_bitmap_image.getHeight();
@@ -499,9 +494,6 @@ public class MainActivity extends Activity
 
         return bitmap_sketch_book;
     }
-
-
-
     public Bitmap detect_the_number_area(final Bitmap before_binarization_bitmap_image){
         int threshold_of_number_of_color_changed = 9;
         int number_of_color_changed = 0;
@@ -567,9 +559,6 @@ public class MainActivity extends Activity
 
         return bitmap_sketch_book;
     }
-
-
-
     public Bitmap gaussian_filtering (final Bitmap before_dilation_bitmap_image, int filter_width){
 
 
@@ -658,7 +647,6 @@ public class MainActivity extends Activity
 
         return bitmap_sketch_book;
     }
-
     public Bitmap get_image_of_height_number_area(final Bitmap image_which_will_be_cropped){
 
         int width = image_which_will_be_cropped.getWidth();
@@ -674,9 +662,6 @@ public class MainActivity extends Activity
 
         return image_of_height_number_area;
     }
-
-
-
     public void find_letter_candidate_from_left_to_right(final Bitmap before_bitmap_image){
 
         int width = before_bitmap_image.getWidth();
@@ -738,16 +723,8 @@ public class MainActivity extends Activity
 
         }
     }
-
-
-
     public void find_letter(int [] pixels_array, int width, int height, int reference_index, int x, int y){
 
-//		if(y > height || y < 0 || x < width)
-//			return;
-
-
-//		Toast.makeText(getApplicationContext(), "asdf", Toast.LENGTH_LONG).show();
         pixels_array[reference_index] = 0xffff0000;
         int index = 0;
 
@@ -876,8 +853,6 @@ public class MainActivity extends Activity
 
         return;
     }
-
-
     public Bitmap get_a_letter(final Bitmap image_which_will_be_re_created){
 
         int width_of_image_which_would_be_extracted = image_which_will_be_re_created.getWidth();
@@ -912,16 +887,11 @@ public class MainActivity extends Activity
 
 
     }
-
-
-
-    public static Bitmap RotateBitmap(Bitmap source, float angle)
-    {
+    public static Bitmap RotateBitmap(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
-
     public Bitmap get_rid_of_border_whose_width_is_1_pixel(final Bitmap before_bitmap_image){
         int threshold = 150 * 100;
 
@@ -961,9 +931,6 @@ public class MainActivity extends Activity
 
         return bitmap_sketch_book;
     }
-
-
-
     public Bitmap pseudo_erase_image(final Bitmap before_bitmap_image){
 
         int width = before_bitmap_image.getWidth();
@@ -983,8 +950,6 @@ public class MainActivity extends Activity
 
         return bitmap_sketch_book;
     }
-
-
     public void judge_candidate_by_width(final Bitmap before_bitmap_image){
 
         int width = before_bitmap_image.getWidth();
@@ -1059,8 +1024,6 @@ public class MainActivity extends Activity
             }
         }
     }
-
-
     //    source: http://www.masterqna.com/android/81347/%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-app-%EC%9E%AC%EC%8B%9C%EC%9E%91-%EC%97%90-%EB%8C%80%ED%95%B4-%EC%A7%88%EB%AC%B8%EB%93%9C%EB%A6%BD%EB%8B%88%EB%8B%A4
     public void restart(){
 
@@ -1071,8 +1034,6 @@ public class MainActivity extends Activity
         startActivity(i);
 
     }
-
-
     public void distinguish_numbers (final Bitmap before_bitmap_image, int image_index) {
 
         int black = 0xff000000;
@@ -1373,11 +1334,11 @@ public class MainActivity extends Activity
 
         //        calculate rate for detecting 8
         float[] detecting_8_at_each_case_x_rate = new float[detecting_8_at_each_case_count_x_of_left_and_right.length];
-        for (int i = 0; i < detecting_all_part_left_of_each_height_divided_by_24.length / 4; i++) {
+        for (int i = 0; i < detecting_all_part_left_of_each_height_divided_by_24.length / 5; i++) {
             if ((detecting_all_part_right_of_each_height_divided_by_24[i + 1] - detecting_all_part_left_of_each_height_divided_by_24[i + 1]) > (detecting_all_part_right_of_each_height_divided_by_24[i] - detecting_all_part_left_of_each_height_divided_by_24[i]))
                 detecting_8_at_each_case_count_x_of_left_and_right[0] += 1;
         }
-        detecting_8_at_each_case_x_rate[0] = (float) detecting_8_at_each_case_count_x_of_left_and_right[0] / (detecting_all_part_left_of_each_height_divided_by_24.length / 4);
+        detecting_8_at_each_case_x_rate[0] = (float) detecting_8_at_each_case_count_x_of_left_and_right[0] / (detecting_all_part_left_of_each_height_divided_by_24.length / 5);
         for (int i = detecting_all_part_left_of_each_height_divided_by_24.length * 1 / 4; i < detecting_all_part_left_of_each_height_divided_by_24.length * 2 / 4; i++) {
             if ((detecting_all_part_right_of_each_height_divided_by_24[i + 1] - detecting_all_part_left_of_each_height_divided_by_24[i + 1]) < (detecting_all_part_right_of_each_height_divided_by_24[i] - detecting_all_part_left_of_each_height_divided_by_24[i]))
                 detecting_8_at_each_case_count_x_of_left_and_right[1] += 1;
@@ -1388,11 +1349,11 @@ public class MainActivity extends Activity
                 detecting_8_at_each_case_count_x_of_left_and_right[2] += 1;
         }
         detecting_8_at_each_case_x_rate[2] = (float) detecting_8_at_each_case_count_x_of_left_and_right[2] / (detecting_all_part_left_of_each_height_divided_by_24.length / 4);
-        for (int i = detecting_all_part_left_of_each_height_divided_by_24.length * 3 / 4; i < detecting_all_part_left_of_each_height_divided_by_24.length * 4 / 4 - 1; i++) {
+        for (int i = detecting_all_part_left_of_each_height_divided_by_24.length * 4 / 5; i < detecting_all_part_left_of_each_height_divided_by_24.length * 5 / 5 - 1; i++) {
             if ((detecting_all_part_right_of_each_height_divided_by_24[i + 1] - detecting_all_part_left_of_each_height_divided_by_24[i + 1]) < (detecting_all_part_right_of_each_height_divided_by_24[i] - detecting_all_part_left_of_each_height_divided_by_24[i]))
                 detecting_8_at_each_case_count_x_of_left_and_right[3] += 1;
         }
-        detecting_8_at_each_case_x_rate[3] = (float) detecting_8_at_each_case_count_x_of_left_and_right[3] / (detecting_all_part_left_of_each_height_divided_by_24.length / 4 - 1);
+        detecting_8_at_each_case_x_rate[3] = (float) detecting_8_at_each_case_count_x_of_left_and_right[3] / (detecting_all_part_left_of_each_height_divided_by_24.length / 5 - 1);
 
         if (detecting_8_at_each_case_x_rate[0] > 0.5)
             if (detecting_8_at_each_case_x_rate[1] > 0.5)
@@ -1686,9 +1647,6 @@ public class MainActivity extends Activity
 //        text_view_whether_letter_or_number_or_noise[image_index].setText(Integer.toString(count_x_symmetric_of_left_and_right));
 //        text_view_whether_letter_or_number_or_noise[image_index].setText(Integer.toString(count_y_symmetric_of_left_and_right));
     }
-
-
-
     public void distinguish_vowels (final Bitmap before_bitmap_image, int image_index){
 
         int black = 0xff000000;
@@ -1759,9 +1717,6 @@ public class MainActivity extends Activity
 
 
     }
-
-
-
     public void distinguish_c​onsonants (final Bitmap before_bitmap_image, int image_index){
 
         int black = 0xff000000;
@@ -2231,6 +2186,76 @@ public class MainActivity extends Activity
 //        detecting ㄹ
         text_view_whether_letter_or_number_or_noise[image_index].setText("ㄹ");
         return;
+
+
+    }
+    public void distinguish_combined_alphabets (final Bitmap before_bitmap_image, int image_index){
+
+        int black = 0xff000000;
+        int width = before_bitmap_image.getWidth();
+        int height = before_bitmap_image.getHeight();
+
+        int[] pixels_array = new int[width * height];
+        Bitmap bitmap_sketch_book = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+
+        before_bitmap_image.getPixels(pixels_array, 0, width, 0, 0, width, height);
+
+        if((float) width / height > 1.3){
+            int count_dots_of_high_part = 0;
+            int count_dots_of_low_part = 0;
+            int index = 0;
+
+            for(int y = 0; y < height / 2; y++){
+                for(int x = 0; x < width; x++){
+                    index = y * width + x;
+
+                    if(pixels_array[index] == black)
+                        count_dots_of_high_part += 1;
+                }
+            }
+            for(int y = height / 2; y < height; y++){
+                for(int x = 0; x < width; x++){
+                    index = y * width + x;
+
+                    if(pixels_array[index] == black)
+                        count_dots_of_low_part += 1;
+                }
+            }
+
+            if(count_dots_of_high_part > count_dots_of_low_part)
+                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅜ");
+            else
+                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅗ");
+        }
+        else{
+            int count_dots_of_right_part = 0;
+            int count_dots_of_left_part = 0;
+            int index = 0;
+
+            for(int x = 0; x < width / 2; x++){
+                for(int y = 0; y < height; y++){
+                    index = y * width + x;
+
+                    if(pixels_array[index] == black)
+                        count_dots_of_left_part += 1;
+                }
+            }
+            for(int x = width / 2; x < width; x++){
+                for(int y = 0; y < height; y++){
+                    index = y * width + x;
+
+                    if(pixels_array[index] == black)
+                        count_dots_of_right_part += 1;
+                }
+            }
+
+            if(count_dots_of_right_part > count_dots_of_left_part * 13 / 10)
+                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅓ");
+            else if(count_dots_of_left_part > count_dots_of_right_part * 13 / 10)
+                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅏ");
+            else
+                text_view_whether_letter_or_number_or_noise[image_index].setText("ㅐ");
+        }
 
 
     }
