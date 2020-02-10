@@ -1,5 +1,4 @@
 # Embedded_System_Design_Project
-김영진 교수님 감사합니다!
 
 임베디드시스템 설계 강의 자료
 https://drive.google.com/drive/folders/1-C7YnBcHKBlUjw1mvXkTru-9xRJfRaaU?usp=sharing
