@@ -1,16 +1,107 @@
-# Embedded_System_Design_Project
+# 🚗 자동차 번호판 인식 안드로이드 앱
 
-자동차 번호판 내 문자 인식 프로젝트
-(아주대학교 전자공학과 2019년 1학기 임베디드 시스템 설계)
+2019년 1학기 아주대학교 전자공학과 '임베디드 시스템 설계' 과목에서 진행한 안드로이드 기반의 자동차 번호판 문자 인식 프로젝트입니다. 
 
-임베디드시스템 설계 강의 자료
+---
 
-https://drive.google.com/drive/folders/1-C7YnBcHKBlUjw1mvXkTru-9xRJfRaaU?usp=sharing
+<br>
 
-영상신호처리 강의 자료
+<details>
+<summary><strong>👨‍💼 비전공자를 위한 프로젝트 설명 (클릭하여 펼치기)</strong></summary>
 
-https://drive.google.com/drive/folders/1-C7YnBcHKBlUjw1mvXkTru-9xRJfRaaU?usp=sharing
+### 1. 프로젝트 소개
+*   **목표**: 스마트폰으로 자동차 번호판을 촬영하거나 갤러리에서 이미지를 불러와, 그 안에 포함된 숫자와 문자를 자동으로 인식하는 안드로이드 앱을 개발하였습니다. 
+*   **의의**: 이 프로젝트를 통해 **SW 개발 역량**과 **영상 처리 기초 기술에 대한 이해도**를 보여드리고자 하였습니다.
 
+### 2. 주요 기능
+*   **이미지 입력**: 스마트폰 갤러리에서 번호판 이미지를 선택하여 앱으로 가져옵니다. 
+*   **번호판 영역 추출**: 이미지 전체에서 번호판이 위치한 영역을 자동으로 찾아냅니다. 
+*   **문자 분리 및 인식**: 추출된 번호판 영역에서 개별 숫자와 문자를 분리하고, 어떤 문자인지 판별합니다. 
+*   **결과 확인**: 최종적으로 인식된 번호판 문자들을 화면에 표시합니다. 
 
+### 3. 프로젝트를 통해 얻은 역량
+*   **문제 해결 능력**: '번호판 문자 인식'이라는 구체적인 문제를 해결하기 위해, 복잡한 영상 처리 기술을 학습하고 실제 안드로이드 환경에 적용하는 과정을 통해 문제 해결 능력을 길렀습니다.
+*   **기본기**: OpenCV와 같은 외부 라이브러리 사용을 최소화하고, 영상 처리의 핵심 알고리즘을 Java 코드로 직접 구현하며 SW 개발의 기본기를 다졌습니다. 
 
-(Can not resolve -> Ctrl + Shift + o)
+</details>
+
+<br>
+
+<details>
+<summary><strong>👩‍💻 전공자를 위한 프로젝트 설명 (클릭하여 펼치기)</strong></summary>
+
+### 1. 프로젝트 개요
+본 프로젝트는 안드로이드 환경에서 Java와 표준 SDK만을 사용하여 자동차 번호판 인식(ANPR) 시스템의 핵심 파이프라인을 직접 구현한 것입니다. 외부 라이브러리에 대한 의존성을 최소화하고, 영상 처리 알고리즘에 대한 깊은 이해를 바탕으로 전처리부터 문자 인식까지의 전 과정을 개발하였습니다.
+
+### 2. 사용 기술
+*   **Platform**: `Android`
+*   **Language**: `Java`
+*   **Target SDK**: `19 (KitKat)` 
+*   **Core Logic**: Native `Java` Code, `android.graphics.Bitmap`
+*   **Algorithms**: Digital Image Processing, Rule-based Optical Character Recognition (OCR) 
+
+### 3. 시스템 아키텍처 및 처리 흐름
+핵심 로직은 `ImageROI_source/MainActivity.java`  파일에 구현되어 있으며, 처리 과정은 다음과 같습니다.
+
+1.  **전처리 (Preprocessing)**
+    *   `resize_samplesize`: 연산량 감소를 위해 입력 이미지의 크기를 일정 비율로 축소합니다. 
+    *   `gray_scaling`: RGB 컬러 이미지를 흑백 명암 이미지로 변환하여 후속 처리 과정을 단순화합니다. 
+    *   `binarization`: 그레이스케일 이미지를 지정된 임계값(Threshold) 기준으로 흑/백 이미지로 변환하여 문자와 배경을 명확히 구분합니다. 
+
+2.  **번호판 영역 추출 (ROI Detection)**
+    *   `dilation` & `gaussian_filtering`: 형태학적 연산(팽창)을 적용하여 번호판 내 문자들의 끊어진 부분을 연결하고, 가우시안 필터링으로 노이즈를 제거합니다. 
+    *   `detect_the_number_area`: 이미지의 각 행(row)을 스캔하며 픽셀 값의 변화(흑/백 전환)가 가장 빈번하게 일어나는 수평 영역을 찾습니다. 번호판은 문자들로 인해 픽셀 변화가 많다는 특징을 이용한 것입니다. 
+    *   `get_image_of_height_number_area`: 검출된 영역의 좌표를 이용해 원본 이미지에서 번호판 부분만 잘라냅니다(Crop). 
+
+3.  **문자 분할 (Character Segmentation)**
+    *   `find_letter_candidate_from_left_to_right`: 크롭된 번호판 이미지에서 왼쪽부터 오른쪽으로 스캔하며 연결된 픽셀 그룹(Connected Component)을 찾습니다. 
+    *   `find_letter`: 재귀 함수를 이용한 Flood Fill 알고리즘과 유사한 방식으로, 연결된 검은색 픽셀들을 하나의 객체(문자)로 인식하고 라벨링합니다. 
+    *   `get_a_letter`: 라벨링된 각 객체의 경계 상자(Bounding Box)를 계산하여 개별 문자 비트맵으로 추출합니다. 
+    *   `judge_candidate_by_width`: 추출된 문자 후보들의 가로/세로 비율과 크기를 분석하여, 너무 크거나 작은 노이즈성 객체들을 제거합니다. 
+
+4.  **문자 인식 (Character Recognition - Rule-based OCR)**
+    머신러닝 모델 없이, 각 문자의 형태적 특징을 분석하는 **규칙 기반(Rule-based)** 알고리즘을 구현하였습니다. `distinguish_numbers`, `distinguish_consonants` 등의 함수가 이 역할을 수행합니다. 
+    *   **숫자 인식 (`distinguish_numbers`)**: 문자를 수평/수직으로 여러 구간으로 나누고, 각 구간의 특징을 분석합니다.
+        *   **예시 (숫자 '8')**: 이미지 상단부터 하단으로 내려오면서 문자의 폭이 '증가 → 감소 → 증가 → 감소'하는 패턴을 보이는지 확인합니다. 
+        *   **예시 (숫자 '1')**: 다른 문자에 비해 좌우 대칭성이 높고 폭이 좁다는 특징을 이용합니다. 
+    *   **한글 인식 (`distinguish_consonants`, `distinguish_vowels`)**: 문자의 중심에서 상/하/좌/우 네 방향으로 가상의 선을 그었을 때, 선이 문자의 획에 의해 막히는지(blocked) 여부로 'ㄱ', 'ㄴ', 'ㄷ' 등을 구분합니다. 
+
+### 4. 코드 리뷰 및 고찰
+
+#### 🟢 잘된 점 (Strengths)
+
+1.  **알고리즘의 직접 구현**
+    OpenCV와 같은 외부 라이브러리에 의존하지 않고 그레이스케일, 이진화, 형태학적 연산(Dilation), Connected Component Labeling 등 핵심 영상 처리 알고리즘을 `Bitmap` 픽셀 단위 조작으로 직접 구현하였습니다.  이는 교수님의 수업 취지에 맞춰 알고리즘에 대한 기초 이해도를 쌓는 과정이었습니다.
+
+2.  **논리적 문제 해결 능력**
+    규칙 기반 문자 인식 엔진을 직접 설계하고 구현한 점은 복잡한 문제를 논리적으로 분석하고 해결하는 능력을 보여주는 예시입니다. 각 문자의 기하학적, 위상적 특징을 세밀하게 분석하여 인식 규칙을 만든 과정이 포인트입니다. 
+
+3.  **체계적인 개발 과정**
+    `CameraAPITest` , `CameraTest`  등 기능별 테스트 프로젝트를 통해 점진적으로 개발을 진행하여 안정적인 소프트웨어 개발 방법론을 적용하려 노력하였음을 알 수 있습니다.
+
+#### 🟡 프로젝트 회고 및 개선 방향 (Retrospective & Future Improvements)
+
+1.  **매직 넘버 (Magic Number) 상수화**
+    코드 내에 `threshold = 150 * 100` , `threshold_of_number_of_color_changed = 9`  등 개발에 관여하지 않은 제3자로서는 의미를 알기 어려운 숫자(매직 넘버)가 하드코딩되어 있습니다. 이를 `final static` 상수로 정의하여 가독성과 유지보수성을 높일 수 있습니다.
+
+    ```java
+    // Before
+    if(gray_scaled_rgb > 15000) { ... }
+    // After
+    private static final int BINARIZATION_THRESHOLD = 15000;
+    if(gray_scaled_rgb > BINARIZATION_THRESHOLD) { ... }
+    ```
+    또한, Otsu's Method와 같이 이미지 특성에 따라 임계값을 동적으로 결정하는 알고리즘을 적용하면 더 견고한 시스템을 만들 수 있습니다.
+
+2. **성능 최적화**
+Java 레벨에서 for 루프를 통해 픽셀 단위로 직접 접근하는 방식은 연산량이 많은 영상 처리에서 성능 저하의 원인이 될 수 있습니다.  성능이 중요한 애플리케이션에서는 Android NDK(C/C++)를 활용하여 핵심 연산 부분을 네이티브 코드로 구현하는 것을 고려해볼 수 있습니다.
+
+3. **API 현대화**
+프로젝트의 일부 테스트 코드에서 현재는 지원이 중단된(Deprecated) Camera API가 사용되었습니다.   더 향상된 기능과 안정성을 제공하는 Camera2 또는 CameraX Jetpack 라이브러리로 마이그레이션하여야 합니다.
+
+5. **인식 엔진의 확장성**
+규칙 기반 인식 엔진은 특정 폰트, 조명, 촬영 각도에 민감하여 강건함(Robustness)이 떨어질 수 있습니다.  향후 TensorFlow Lite와 같은 모바일 추론 프레임워크를 사용하여 간단한 CNN(Convolutional Neural Network) 기반의 OCR 모델을 학습시켜 적용한다면 인식률과 범용성을 크게 향상시킬 수 있습니다.
+
+7. **코드 스타일**
+일부 변수명(자음, 모음)이 한글로 되어 있고 , 주석이 한글과 영어가 혼용되어 있습니다. 협업을 고려하여 변수명과 함수명은 영어로 통일하고, distinguish_numbers  함수처럼 if-else가 길게 나열되는 부분은 Strategy Pattern 등을 적용하여 리팩토링하여야 가독성과 유지보수성을 향상시킬 수 있습니다.
+</details>
